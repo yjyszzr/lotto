@@ -22,9 +22,9 @@ public class LottoFirstController {
 	private LottoFirstService lottoFirstService;
 
 	
-	@ApiOperation(value = "首页信息", notes = "首页信息")
-	@PostMapping("/queryFirstData")
-	public BaseResult<List<LottoFirstDTO>> queryFirstData() {
+	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")
+	@PostMapping("/getTicketInfo")
+	public BaseResult<List<LottoFirstDTO>> getTicketInfo() {
 		return lottoFirstService.queryFirstData();
 	}
 	
