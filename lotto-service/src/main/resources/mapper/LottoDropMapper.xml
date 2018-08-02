@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dl.shop.lotto.dao2.LottoDropMapper">
+  <resultMap id="BaseResultMap" type="com.dl.shop.lotto.model.LottoDrop">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="term_num" jdbcType="INTEGER" property="term_num" />
+    <result column="pre_drop" jdbcType="VARCHAR" property="pre_drop" />
+    <result column="post_drop" jdbcType="VARCHAR" property="post_drop" />
+    <result column="create_time" jdbcType="INTEGER" property="create_time" />
+  </resultMap>
+  
+  <select id="queryChartDataByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
+	SELECT
+		d.* 
+	FROM
+		( SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT #{count} ) d 
+	ORDER BY
+		d.term_num;  	
+  </select>
+  <select id="queryLatelyDataByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
+	SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT 1;	
+  </select>
+</mapper>

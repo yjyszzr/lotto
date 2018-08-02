@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dl.shop.lotto.dao2.LottoMapper">
+  <resultMap id="BaseResultMap" type="com.dl.shop.lotto.model.Lotto">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="term_num" jdbcType="INTEGER" property="term_num" />
+    <result column="prize_date" jdbcType="VARCHAR" property="prize_date" />
+    <result column="prize_num" jdbcType="VARCHAR" property="prize_num" />
+    <result column="prizes" jdbcType="VARCHAR" property="prizes" />
+    <result column="create_time" jdbcType="INTEGER" property="create_time" />
+  </resultMap>
+  <!-- 历史中奖 -->
+ <select id="queryHistoryPrizeData" resultType="com.dl.shop.lotto.model.Lotto">
+	SELECT
+		l.* 
+	FROM
+		( SELECT * FROM dl_super_lotto ORDER BY term_num DESC LIMIT 10 ) l 
+	ORDER BY
+		l.term_num;  	
+  </select>
+  <!-- 最近奖期 -->
+ <select id="queryLatelyPrizeData" resultType="com.dl.shop.lotto.model.Lotto">
+	SELECT * FROM dl_super_lotto ORDER BY term_num DESC LIMIT 1;
+  </select>
+</mapper>
