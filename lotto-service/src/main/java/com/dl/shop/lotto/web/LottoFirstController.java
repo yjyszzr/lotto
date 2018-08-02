@@ -24,7 +24,7 @@ public class LottoFirstController {
 	
 	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")
 	@PostMapping("/getTicketInfo")
-	public BaseResult<List<LottoFirstDTO>> getTicketInfo() {
+	public BaseResult<LottoFirstDTO> getTicketInfo() {
 		return lottoFirstService.queryFirstData();
 	}
 	

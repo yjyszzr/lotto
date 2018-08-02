@@ -33,8 +33,7 @@ public class LottoFirstService {
 	/**
      * 红球走势
      */
-	 public BaseResult<List<LottoFirstDTO>> queryFirstData(){
-		 List<LottoFirstDTO> lottoFirstDTOs = new ArrayList<>();
+	 public BaseResult<LottoFirstDTO> queryFirstData(){
 		 LottoFirstDTO lottoFirstDTO = new LottoFirstDTO();
 		 
 		 List<Lotto> lottos = lottoMapper.queryHistoryPrizeData();
@@ -56,8 +55,7 @@ public class LottoFirstService {
 		 lottoFirstDTO.setPreList(Arrays.asList(lottoDrop.getPre_drop().split(",")));
 		 lottoFirstDTO.setPostList(Arrays.asList(lottoDrop.getPost_drop().split(",")));
 		 
-		 lottoFirstDTOs.add(lottoFirstDTO);
-		 return ResultGenerator.genSuccessResult("success", lottoFirstDTOs);
+		 return ResultGenerator.genSuccessResult("success", lottoFirstDTO);
 	 }
 	  
 	 
