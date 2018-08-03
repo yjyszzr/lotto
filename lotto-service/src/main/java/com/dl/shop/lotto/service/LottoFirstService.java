@@ -14,7 +14,7 @@ import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
 import com.dl.lotto.dto.LottoDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
-import com.dl.lotto.dto.LottoPrizeNumDTO;
+import com.dl.lotto.dto.LottoNumDTO;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
@@ -37,10 +37,10 @@ public class LottoFirstService {
 		 LottoFirstDTO lottoFirstDTO = new LottoFirstDTO();
 		 
 		 List<Lotto> lottos = lottoMapper.queryHistoryPrizeData();
-		 List<LottoPrizeNumDTO> lottoPrizeNumDTOs = new ArrayList<>();
+		 List<LottoNumDTO> lottoPrizeNumDTOs = new ArrayList<>();
 		 if(lottos.size() >= 0) {
 			 lottos.forEach(l->{
-				 LottoPrizeNumDTO lottoPrizeNumDTO = new LottoPrizeNumDTO();
+				 LottoNumDTO lottoPrizeNumDTO = new LottoNumDTO();
 				 lottoPrizeNumDTO.setTermNum(l.getTerm_num()+"期");
 				 lottoPrizeNumDTO.setNumList((Arrays.asList(l.getPrize_num().split(","))));
 				 lottoPrizeNumDTOs.add(lottoPrizeNumDTO);

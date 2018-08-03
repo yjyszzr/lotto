@@ -17,7 +17,13 @@
 	FROM
 		( SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT #{count} ) d 
 	ORDER BY
-		d.term_num;  	
+		d.term_num 
+		<if test="orderBY == 1"> 
+				desc
+			</if>;  	
+  </select>
+  <select id="queryHeatColdByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
+	  SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT 100  
   </select>
   <select id="queryLatelyDataByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
 	SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT 1;	

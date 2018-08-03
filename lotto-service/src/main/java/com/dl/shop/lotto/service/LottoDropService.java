@@ -2,6 +2,7 @@ package com.dl.shop.lotto.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,9 @@ import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
 import com.dl.lotto.dto.LottoDropDTO;
 import com.dl.lotto.dto.LottoHeatColdDTO;
-import com.dl.lotto.param.TermNumParam;
+import com.dl.lotto.dto.LottoNumDTO;
+import com.dl.lotto.param.ChartSetupParam;
+import com.dl.lotto.param.HeatColdParam;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.model.LottoDrop;
 import tk.mybatis.mapper.entity.Condition;
@@ -32,69 +35,64 @@ public class LottoDropService {
 	/**
      * 红球走势
      */
-	 public BaseResult<List<LottoHeatColdDTO>> queryHeatColdByColor(){
+	 public BaseResult<List<LottoHeatColdDTO>> queryHeatColdByColor(HeatColdParam heatColdParam){
 		 //查询遗漏
 		 LottoDrop lottoDrop = lottoDropMapper.queryLatelyDataByColor();
 		 List<String> preList = new ArrayList<>();
 		 preList = Arrays.asList(lottoDrop.getPre_drop().split(","));
-		 
-		 TermNumParam termNumParam = new TermNumParam();
-		 termNumParam.setCount(100);
-		 List<LottoDrop> lottoDrops = lottoDropMapper.queryChartDataByColor(termNumParam);
+		 List<LottoDrop> lottoDrops = lottoDropMapper.queryHeatColdByColor(heatColdParam);
 		 List<LottoHeatColdDTO> lottoDTOs = new ArrayList<>();
 		 if(lottoDrops.size() >= 0) {
 			 Map<Integer,List<String>> mapA = new HashMap<>();
 			 Map<Integer,List<String>> mapB = new HashMap<>();
 			 Map<Integer,List<String>> mapC = new HashMap<>();
-			 //最近30期数据转List
-			 for (int i = 0; i < 30; i++) {
+			//最近30，50，100期数据转List
+			 for (int i = 0; i < lottoDrops.size(); i++) {
 				 LottoDrop drop = lottoDrops.get(i);
 				 String preDrop = drop.getPre_drop();
-				 List<String> list = Arrays.asList(preDrop.split(","));
+				 String postDrop = drop.getPost_drop();
+				 List<String> list = new ArrayList<>();
+				 if(heatColdParam.getColor()==0) {//红
+					 list = Arrays.asList(preDrop.split(","));
+				 }
+				 if(heatColdParam.getColor()==1) {//蓝
+					 list = Arrays.asList(postDrop.split(","));
+				 }
+				
 				 for (int j = 1; j <= list.size(); j++) {
-					 if(mapA.get(j)==null) {
-						 List<String> l1 = new ArrayList<>();
-						 l1.add(list.get(j-1));
-						 mapA.put(j, l1);
-					 }else {
-						 List<String> l1 = mapA.get(j);
-						 l1.add(list.get(j-1));
-						 mapA.put(j, l1);
-					 }
-				}
-			 }
-			//最近50期数据转List
-			 for (int i = 0; i < 50; i++) {
-				 LottoDrop drop = lottoDrops.get(i);
-				 String preDrop = drop.getPre_drop();
-				 List<String> list = Arrays.asList(preDrop.split(","));
-				 for (int j = 1; j <= list.size(); j++) {
-					 if(mapB.get(j)==null) {
-						 List<String> l1 = new ArrayList<>();
-						 l1.add(list.get(j-1));
-						 mapB.put(j, l1);
-					 }else {
-						 List<String> l1 = mapB.get(j);
-						 l1.add(list.get(j-1));
-						 mapB.put(j, l1);
-					 }
-				}
-			 }
-			//最近100期数据转List
-			 for (int i = 0; i < 100; i++) {
-				 LottoDrop drop = lottoDrops.get(i);
-				 String preDrop = drop.getPre_drop();
-				 List<String> list = Arrays.asList(preDrop.split(","));
-				 for (int j = 1; j <= list.size(); j++) {
-					 if(mapC.get(j)==null) {
-						 List<String> l1 = new ArrayList<>();
-						 l1.add(list.get(j-1));
-						 mapC.put(j, l1);
-					 }else {
-						 List<String> l1 = mapC.get(j);
-						 l1.add(list.get(j-1));
-						 mapC.put(j, l1);
-					 }
+					if (i < 30) {
+						if (mapA.get(j) == null) {
+							List<String> l1 = new ArrayList<>();
+							l1.add(list.get(j - 1));
+							mapA.put(j, l1);
+						} else {
+							List<String> l1 = mapA.get(j);
+							l1.add(list.get(j - 1));
+							mapA.put(j, l1);
+						}
+					}
+					if (i < 50) {
+						if (mapB.get(j) == null) {
+							List<String> l2 = new ArrayList<>();
+							l2.add(list.get(j - 1));
+							mapB.put(j, l2);
+						} else {
+							List<String> l2 = mapB.get(j);
+							l2.add(list.get(j - 1));
+							mapB.put(j, l2);
+						}
+					}
+					if (i < 100) {
+						if (mapC.get(j) == null) {
+							List<String> l3 = new ArrayList<>();
+							l3.add(list.get(j - 1));
+							mapC.put(j, l3);
+						} else {
+							List<String> l3 = mapC.get(j);
+							l3.add(list.get(j - 1));
+							mapC.put(j, l3);
+						}
+					}
 				}
 			 }
 			 
@@ -114,6 +112,9 @@ public class LottoDropService {
 				 lottoHeatColdDTO.setCountC(sC.count()+"");
 				 lottoDTOs.add(lottoHeatColdDTO);
 			 }
+			 if(heatColdParam.getOrder() == 1) {
+				 Collections.reverse(lottoDTOs);//顺序反转
+			 }
 		 }
 		 
 		 return ResultGenerator.genSuccessResult("success", lottoDTOs);
@@ -122,26 +123,35 @@ public class LottoDropService {
 	/**
      * 红球走势
      */
-	 public BaseResult<List<LottoDropDTO>> queryChartDataByColor(TermNumParam termNumParam){
-		 List<LottoDrop> lottoDrops = lottoDropMapper.queryChartDataByColor(termNumParam);
-		 
-		 List<LottoDropDTO> lottoDTOs = new ArrayList<>();
+	 public BaseResult<LottoDropDTO> queryChartDataByColor(ChartSetupParam setupParam){
+		 LottoDropDTO lottoDropDTO = new LottoDropDTO();
+		 List<LottoDrop> lottoDrops = lottoDropMapper.queryChartDataByColor(setupParam);
+		 List<LottoNumDTO> drops = new ArrayList<>();
 		 if(lottoDrops.size() >= 0) {
 			 Map<Integer,List<String>> map = new HashMap<>();
 			 lottoDrops.forEach(l->{
-				 LottoDropDTO dropDTO = new LottoDropDTO();
+				 LottoNumDTO drop = new LottoNumDTO();
 				 String preDrop = l.getPre_drop();
 				 String postDrop = l.getPost_drop();
-				 dropDTO.setTerm_num(l.getTerm_num());
+				 drop.setTermNum(l.getTerm_num()+"");
 				 List<String> list = new ArrayList<>();
-				 if(termNumParam.getColor()==0) {//红
+				 List<String> list2 = new ArrayList<>();
+				 if(setupParam.getColor()==0) {//红
 					 list = Arrays.asList(preDrop.split(","));
 				 }
-				 if(termNumParam.getColor()==1) {//蓝
+				 if(setupParam.getColor()==1) {//蓝
 					 list = Arrays.asList(postDrop.split(","));
 				 }
-				 dropDTO.setList(list);
-				 lottoDTOs.add(dropDTO);
+				 list2 = list;
+				 if(setupParam.getDrop() == 1) {
+					 for(int j = 0;j<list2.size();j++){
+						 if(!list2.get(j).equals("0")) {
+							 list2.set(j, "");
+						 }
+					 }
+				 }
+				 drop.setNumList(list2);
+				 drops.add(drop);
 				 
 				 //将每个号码的往期遗漏组成list
 				 for (int i = 1; i <= list.size(); i++) {
@@ -156,18 +166,24 @@ public class LottoDropService {
 					 }
 				}
 			 });
-			  getList(lottoDTOs,map);
+		
+			 lottoDropDTO.setDrop(drops);
+			 //显示计算统计
+			 if(setupParam.getCompute() == 0) {
+				 lottoDropDTO.setCompute(getList(map));
+			 }
 			 
 		 }
 		 
-		 return ResultGenerator.genSuccessResult("success", lottoDTOs);
+		 return ResultGenerator.genSuccessResult("success", lottoDropDTO);
 	 }
 	  
 	 /**
 	  * 计算每个号码的平均，最大，次数，连出
 	  */
 	 
-	 private List<LottoDropDTO>  getList(List<LottoDropDTO>  lottoDTOs,Map<Integer,List<String>> map) {
+	 private Map<String,List<String>>  getList(Map<Integer,List<String>> map) {
+		 Map<String,List<String>> computeMap = new HashMap<>();
 		 List<String> averageList = new ArrayList<>();
 		 List<String> maxList = new ArrayList<>();
 		 List<String> countList = new ArrayList<>();
@@ -199,23 +215,11 @@ public class LottoDropService {
 			 continuityList.add(ctt+"");
 		 }
 		 
-		 LottoDropDTO dropDTO1 = new LottoDropDTO();
-		 dropDTO1.setTerm_num(1);
-		 dropDTO1.setList(averageList);
-		 lottoDTOs.add(dropDTO1);
-		 LottoDropDTO dropDTO2 = new LottoDropDTO();
-		 dropDTO2.setTerm_num(2);
-		 dropDTO2.setList(maxList);
-		 lottoDTOs.add(dropDTO2);
-		 LottoDropDTO dropDTO3 = new LottoDropDTO();
-		 dropDTO3.setTerm_num(3);
-		 dropDTO3.setList(countList);
-		 lottoDTOs.add(dropDTO3);
-		 LottoDropDTO dropDTO4 = new LottoDropDTO();
-		 dropDTO4.setTerm_num(4);
-		 dropDTO4.setList(continuityList);
-		 lottoDTOs.add(dropDTO4);
+		 computeMap.put("average", averageList);
+		 computeMap.put("max", maxList);
+		 computeMap.put("count", countList);
+		 computeMap.put("continuity", continuityList);
 		 
-		 return lottoDTOs;
+		 return computeMap;
 	 }
 }

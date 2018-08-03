@@ -3,7 +3,7 @@ package com.dl.shop.lotto.dao2;
 import java.util.List;
 
 import com.dl.base.mapper.Mapper;
-import com.dl.lotto.param.TermNumParam;
+import com.dl.lotto.param.ChartSetupParam;
 import com.dl.shop.lotto.model.LottoDrop;
 import com.dl.shop.lotto.model.Lotto;
 

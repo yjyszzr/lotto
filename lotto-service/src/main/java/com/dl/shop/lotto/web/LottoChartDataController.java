@@ -13,7 +13,8 @@ import com.dl.base.result.BaseResult;
 import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.dto.LottoHeatColdDTO;
 import com.dl.lotto.dto.LottoDropDTO;
-import com.dl.lotto.param.TermNumParam;
+import com.dl.lotto.param.ChartSetupParam;
+import com.dl.lotto.param.HeatColdParam;
 import com.dl.shop.lotto.service.LottoDropService;
 
 import io.swagger.annotations.ApiOperation;
@@ -28,14 +29,20 @@ public class LottoChartDataController {
 	
 	@ApiOperation(value = "查询走势", notes = "查询走势")
 	@PostMapping("/queryChartDataByColor")
-	public BaseResult<List<LottoDropDTO>> queryChartDataByColor(@RequestBody TermNumParam termNumParam) {
-		return lottoDropService.queryChartDataByColor(termNumParam);
+	public BaseResult<LottoDropDTO> queryChartDataByColor(@RequestBody ChartSetupParam setupParam) {
+		return lottoDropService.queryChartDataByColor(setupParam);
 	}
 	
 	@ApiOperation(value = "查询冷热分析", notes = "查询冷热分析")
 	@PostMapping("/queryHeatColdByColor")
-	public BaseResult<List<LottoHeatColdDTO>> queryHeatColdByColor() {
-		return lottoDropService.queryHeatColdByColor();
+	public BaseResult<List<LottoHeatColdDTO>> queryHeatColdByColor(@RequestBody HeatColdParam heatColdParam) {
+		return lottoDropService.queryHeatColdByColor(heatColdParam);
 	}
+	
+//	@ApiOperation(value = "查询冷热分析", notes = "查询冷热分析")
+//	@PostMapping("/queryHeatColdByColor")
+//	public BaseResult<List<LottoHeatColdDTO>> queryHistroyP(@RequestBody ChartSetupParam setupParam) {
+//		return lottoDropService.queryHeatColdByColor(setupParam);
+//	}
 	
 }

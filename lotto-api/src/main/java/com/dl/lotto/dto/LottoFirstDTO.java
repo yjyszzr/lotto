@@ -12,7 +12,7 @@ public class LottoFirstDTO {
 	@ApiModelProperty(value=" 截止日期")
 	private String endDate;
 	@ApiModelProperty(value="历史中奖")
-	private List<LottoPrizeNumDTO> prizeList;
+	private List<LottoNumDTO> prizeList;
 	@ApiModelProperty(value="奖池")
 	private String prizes;
 	@ApiModelProperty(value="前区遗漏")

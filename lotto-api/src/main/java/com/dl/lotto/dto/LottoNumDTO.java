@@ -6,11 +6,11 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class LottoPrizeNumDTO {
+public class LottoNumDTO {
 	 
 	@ApiModelProperty(value=" 期号")
 	private String termNum;
-	@ApiModelProperty(value=" 中奖号码")
+	@ApiModelProperty(value=" 号码")
 	private List<String> numList;
 	 
 	 

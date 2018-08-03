@@ -8,8 +8,8 @@ import lombok.Data;
 
 @Data
 public class LottoDropDTO {
-	@ApiModelProperty(value="期号")
-	private Integer term_num;
-	@ApiModelProperty(value=" 遗漏号码")
-	private List<String> list; 
+	@ApiModelProperty(value="遗漏号码")
+	private List<LottoNumDTO> drop;
+	@ApiModelProperty(value=" 统计计算")
+	private Map<String,List<String>> compute; 
 }
