@@ -24,7 +24,6 @@ import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.HeatColdParam;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.model.LottoDrop;
-import tk.mybatis.mapper.entity.Condition;
 
 @Service
 @Transactional(value="transactionManager2")
