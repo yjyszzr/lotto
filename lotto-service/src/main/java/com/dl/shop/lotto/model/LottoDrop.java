@@ -1,8 +1,12 @@
 package com.dl.shop.lotto.model;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.dl.lotto.dto.LottoNumDTO;
 
 @Table(name = "dl_super_lotto_drop")
 public class LottoDrop {
@@ -51,6 +55,18 @@ public class LottoDrop {
 		this.createTime = createTime;
 	}
 	
+	public LottoNumDTO preLottoNumDto() {
+		LottoNumDTO dto = new LottoNumDTO();
+		dto.setNumList(Arrays.asList(this.getPreDrop().split(",")));
+		dto.setTermNum("第"+this.getTermNum()+"期");
+		return dto;
+	}
 	
+	public LottoNumDTO postLottoNumDto() {
+		LottoNumDTO dto = new LottoNumDTO();
+		dto.setNumList(Arrays.asList(this.getPostDrop().split(",")));
+		dto.setTermNum("第"+this.getTermNum()+"期");
+		return dto;
+	}
 	
 }

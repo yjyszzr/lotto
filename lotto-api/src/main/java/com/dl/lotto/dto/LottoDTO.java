@@ -2,9 +2,11 @@ package com.dl.lotto.dto;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+@ApiModel("开奖信息")
 @Data
 public class LottoDTO {
 	@ApiModelProperty(value="期号")

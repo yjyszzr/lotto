@@ -12,24 +12,14 @@
   term_num,pre_drop,post_drop,create_time
   </sql>
   
-  <select id="queryChartDataByColor" resultMap="BaseResultMap">
-	SELECT 
-	<include refid="allFields"></include>
-	FROM dl_super_lotto_drop 
-	ORDER BY term_num DESC LIMIT #{count} 	
-  </select>
-  <select id="queryHeatColdByColor" resultMap="BaseResultMap">
-	  SELECT 
-	  <include refid="allFields"></include> 
-	  FROM dl_super_lotto_drop 
-	  ORDER BY term_num DESC LIMIT 100  
-  </select>
-  <select id="queryLatelyDataByColor" resultMap="BaseResultMap">
+  
+  <select id="getLastNumLottoDrops" resultMap="BaseResultMap">
 	SELECT 
 	  <include refid="allFields"></include> 
     FROM dl_super_lotto_drop 
-    ORDER BY term_num DESC LIMIT 1
+    ORDER BY term_num DESC LIMIT #{count}
   </select>
+  
   <select id="getLottoDropByTermNum" resultMap="BaseResultMap">
 	SELECT 
 	  <include refid="allFields"></include> 

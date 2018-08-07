@@ -1,8 +1,12 @@
 package com.dl.shop.lotto.model;
 
+import java.util.Arrays;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.dl.lotto.dto.LottoNumDTO;
 
 @Table(name = "dl_super_lotto")
 public class Lotto {
@@ -62,6 +66,11 @@ public class Lotto {
 		this.createTime = createTime;
 	}
 	
-	
+	public LottoNumDTO lottoNumDto() {
+		LottoNumDTO dto = new LottoNumDTO();
+		dto.setNumList(Arrays.asList(this.getPrizeNum().split(",")));
+		dto.setTermNum("第"+this.getTermNum()+"期");
+		return dto;
+	}
 	
 }
