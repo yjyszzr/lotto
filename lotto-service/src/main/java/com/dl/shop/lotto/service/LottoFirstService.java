@@ -31,31 +31,37 @@ public class LottoFirstService {
 	
 	  
 	/**
-     * 红球走势
+     * 投注页数据
      */
-	 public BaseResult<LottoFirstDTO> queryFirstData(){
-		 LottoFirstDTO lottoFirstDTO = new LottoFirstDTO();
-		 
-		 List<Lotto> lottos = lottoMapper.queryHistoryPrizeData();
+	 public LottoFirstDTO queryFirstData(){
+		 LottoFirstDTO lottoFirstDTO = null;
+		 //获取最近10期的开奖
+		 List<Lotto> lottos = lottoMapper.getLastNumLottos(10);
 		 List<LottoNumDTO> lottoPrizeNumDTOs = new ArrayList<>();
 		 if(lottos.size() >= 0) {
+			 Lotto lastLotto = lottos.get(0);
+			 //@Todo
+			 //判断该期次和当前日期是否匹配???
+			 lottos.sort((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum()));
 			 lottos.forEach(l->{
 				 LottoNumDTO lottoPrizeNumDTO = new LottoNumDTO();
-				 lottoPrizeNumDTO.setTermNum(l.getTerm_num()+"期");
-				 lottoPrizeNumDTO.setNumList((Arrays.asList(l.getPrize_num().split(","))));
+				 lottoPrizeNumDTO.setTermNum(l.getTermNum()+"期");
+				 lottoPrizeNumDTO.setNumList((Arrays.asList(l.getPrizeNum().split(","))));
 				 lottoPrizeNumDTOs.add(lottoPrizeNumDTO);
 			 });
+			 //
+			 lottoFirstDTO = new LottoFirstDTO();
+			 lottoFirstDTO.setTerm_num(lastLotto.getTermNum()+1);
+			 lottoFirstDTO.setEndDate(TermEndDateUtil.getChoseEndTime());
+			 lottoFirstDTO.setPrizes(lastLotto.getPrizes());
+			 lottoFirstDTO.setPrizeList(lottoPrizeNumDTOs);
+			 LottoDrop lottoDrop = lottoDropMapper.getLottoDropByTermNum(lastLotto.getTermNum());
+			 if(lottoDrop != null) {
+				 lottoFirstDTO.setPreList(Arrays.asList(lottoDrop.getPreDrop().split(",")));
+				 lottoFirstDTO.setPostList(Arrays.asList(lottoDrop.getPostDrop().split(",")));
+			 }
 		 }
-		 LottoDrop lottoDrop = lottoDropMapper.queryLatelyDataByColor();
-		 Lotto lotto = lottoMapper.queryLatelyPrizeData();
-		 lottoFirstDTO.setTerm_num(lotto.getTerm_num()+1);
-		 lottoFirstDTO.setEndDate(TermEndDateUtil.getChoseEndTime());
-		 lottoFirstDTO.setPrizes(lotto.getPrizes());
-		 lottoFirstDTO.setPrizeList(lottoPrizeNumDTOs);
-		 lottoFirstDTO.setPreList(Arrays.asList(lottoDrop.getPre_drop().split(",")));
-		 lottoFirstDTO.setPostList(Arrays.asList(lottoDrop.getPost_drop().split(",")));
-		 
-		 return ResultGenerator.genSuccessResult("success", lottoFirstDTO);
+		 return lottoFirstDTO;
 	 }
 	  
 	 

@@ -9,17 +9,17 @@ public class Lotto {
 
 	@Id
     @Column(name = "term_num")
-    private Integer term_num;
+    private Integer termNum;
 	/**
      * 开奖日期
      */
 	@Column(name = "prize_date")
-	private String prize_date;
+	private String prizeDate;
 	/**
      * 中奖号码
      */
 	@Column(name = "prize_num")
-	private String prize_num;
+	private String prizeNum;
 	/**
      * 奖池
      */
@@ -29,24 +29,25 @@ public class Lotto {
      * 创建时间
      */
 	@Column(name = "create_time")
-	private Integer create_time;
-	public Integer getTerm_num() {
-		return term_num;
+	private Integer createTime;
+	
+	public Integer getTermNum() {
+		return termNum;
 	}
-	public void setTerm_num(Integer term_num) {
-		this.term_num = term_num;
+	public void setTermNum(Integer termNum) {
+		this.termNum = termNum;
 	}
-	public String getPrize_date() {
-		return prize_date;
+	public String getPrizeDate() {
+		return prizeDate;
 	}
-	public void setPrize_date(String prize_date) {
-		this.prize_date = prize_date;
+	public void setPrizeDate(String prizeDate) {
+		this.prizeDate = prizeDate;
 	}
-	public String getPrize_num() {
-		return prize_num;
+	public String getPrizeNum() {
+		return prizeNum;
 	}
-	public void setPrize_num(String prize_num) {
-		this.prize_num = prize_num;
+	public void setPrizeNum(String prizeNum) {
+		this.prizeNum = prizeNum;
 	}
 	public String getPrizes() {
 		return prizes;
@@ -54,12 +55,13 @@ public class Lotto {
 	public void setPrizes(String prizes) {
 		this.prizes = prizes;
 	}
-	public Integer getCreate_time() {
-		return create_time;
+	public Integer getCreateTime() {
+		return createTime;
 	}
-	public void setCreate_time(Integer create_time) {
-		this.create_time = create_time;
+	public void setCreateTime(Integer createTime) {
+		this.createTime = createTime;
 	}
+	
 	
 	
 }

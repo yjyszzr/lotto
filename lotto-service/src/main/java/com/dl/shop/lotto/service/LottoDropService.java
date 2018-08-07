@@ -38,7 +38,7 @@ public class LottoDropService {
 		 //查询遗漏
 		 LottoDrop lottoDrop = lottoDropMapper.queryLatelyDataByColor();
 		 List<String> preList = new ArrayList<>();
-		 preList = Arrays.asList(lottoDrop.getPre_drop().split(","));
+		 preList = Arrays.asList(lottoDrop.getPreDrop().split(","));
 		 List<LottoDrop> lottoDrops = lottoDropMapper.queryHeatColdByColor(heatColdParam);
 		 List<LottoHeatColdDTO> lottoDTOs = new ArrayList<>();
 		 if(lottoDrops.size() >= 0) {
@@ -48,8 +48,8 @@ public class LottoDropService {
 			//最近30，50，100期数据转List
 			 for (int i = 0; i < lottoDrops.size(); i++) {
 				 LottoDrop drop = lottoDrops.get(i);
-				 String preDrop = drop.getPre_drop();
-				 String postDrop = drop.getPost_drop();
+				 String preDrop = drop.getPreDrop();
+				 String postDrop = drop.getPostDrop();
 				 List<String> list = new ArrayList<>();
 				 if(heatColdParam.getColor()==0) {//红
 					 list = Arrays.asList(preDrop.split(","));
@@ -130,9 +130,9 @@ public class LottoDropService {
 			 Map<Integer,List<String>> map = new HashMap<>();
 			 lottoDrops.forEach(l->{
 				 LottoNumDTO drop = new LottoNumDTO();
-				 String preDrop = l.getPre_drop();
-				 String postDrop = l.getPost_drop();
-				 drop.setTermNum(l.getTerm_num()+"");
+				 String preDrop = l.getPreDrop();
+				 String postDrop = l.getPostDrop();
+				 drop.setTermNum(l.getTermNum()+"");
 				 List<String> list = new ArrayList<>();
 				 List<String> list2 = new ArrayList<>();
 				 if(setupParam.getColor()==0) {//红

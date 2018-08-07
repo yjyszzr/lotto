@@ -8,46 +8,49 @@ import javax.persistence.Table;
 public class LottoDrop {
 	@Id
     @Column(name = "term_num")
-    private Integer term_num;
+    private Integer termNum;
 	/**
      * 前区遗漏
      */
 	@Column(name = "pre_drop")
-	private String pre_drop;
+	private String preDrop;
 	/**
      * 后区遗漏
      */
 	@Column(name = "post_drop")
-	private String post_drop;
+	private String postDrop;
 	/**
      * 创建时间
      */
 	@Column(name = "create_time")
-	private Integer create_time;
-	public Integer getTerm_num() {
-		return term_num;
+	private Integer createTime;
+	
+	
+	public Integer getTermNum() {
+		return termNum;
 	}
-	public void setTerm_num(Integer term_num) {
-		this.term_num = term_num;
+	public void setTermNum(Integer termNum) {
+		this.termNum = termNum;
 	}
-	public String getPre_drop() {
-		return pre_drop;
+	public String getPreDrop() {
+		return preDrop;
 	}
-	public void setPre_drop(String pre_drop) {
-		this.pre_drop = pre_drop;
+	public void setPreDrop(String preDrop) {
+		this.preDrop = preDrop;
 	}
-	public String getPost_drop() {
-		return post_drop;
+	public String getPostDrop() {
+		return postDrop;
 	}
-	public void setPost_drop(String post_drop) {
-		this.post_drop = post_drop;
+	public void setPostDrop(String postDrop) {
+		this.postDrop = postDrop;
 	}
-	public Integer getCreate_time() {
-		return create_time;
+	public Integer getCreateTime() {
+		return createTime;
 	}
-	public void setCreate_time(Integer create_time) {
-		this.create_time = create_time;
+	public void setCreateTime(Integer createTime) {
+		this.createTime = createTime;
 	}
+	
 	
 	
 }

@@ -2,30 +2,38 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dl.shop.lotto.dao2.LottoDropMapper">
   <resultMap id="BaseResultMap" type="com.dl.shop.lotto.model.LottoDrop">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="term_num" jdbcType="INTEGER" property="term_num" />
-    <result column="pre_drop" jdbcType="VARCHAR" property="pre_drop" />
-    <result column="post_drop" jdbcType="VARCHAR" property="post_drop" />
-    <result column="create_time" jdbcType="INTEGER" property="create_time" />
+    <id column="term_num" jdbcType="INTEGER" property="termNum" />
+    <result column="pre_drop" jdbcType="VARCHAR" property="preDrop" />
+    <result column="post_drop" jdbcType="VARCHAR" property="postDrop" />
+    <result column="create_time" jdbcType="INTEGER" property="createTime" />
   </resultMap>
   
-  <select id="queryChartDataByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
-	SELECT
-		d.* 
-	FROM
-		( SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT #{count} ) d 
-	ORDER BY
-		d.term_num 
-		<if test="orderBY == 1"> 
-				desc
-			</if>;  	
+  <sql id="allFields">
+  term_num,pre_drop,post_drop,create_time
+  </sql>
+  
+  <select id="queryChartDataByColor" resultMap="BaseResultMap">
+	SELECT 
+	<include refid="allFields"></include>
+	FROM dl_super_lotto_drop 
+	ORDER BY term_num DESC LIMIT #{count} 	
   </select>
-  <select id="queryHeatColdByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
-	  SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT 100  
+  <select id="queryHeatColdByColor" resultMap="BaseResultMap">
+	  SELECT 
+	  <include refid="allFields"></include> 
+	  FROM dl_super_lotto_drop 
+	  ORDER BY term_num DESC LIMIT 100  
   </select>
-  <select id="queryLatelyDataByColor" resultType="com.dl.shop.lotto.model.LottoDrop">
-	SELECT * FROM dl_super_lotto_drop ORDER BY term_num DESC LIMIT 1;	
+  <select id="queryLatelyDataByColor" resultMap="BaseResultMap">
+	SELECT 
+	  <include refid="allFields"></include> 
+    FROM dl_super_lotto_drop 
+    ORDER BY term_num DESC LIMIT 1
+  </select>
+  <select id="getLottoDropByTermNum" resultMap="BaseResultMap">
+	SELECT 
+	  <include refid="allFields"></include> 
+    FROM dl_super_lotto_drop 
+    where term_num=#{termNum}
   </select>
 </mapper>
