@@ -36,10 +36,10 @@ public class LottoDropService {
      */
 	 public BaseResult<List<LottoHeatColdDTO>> queryHeatColdByColor(HeatColdParam heatColdParam){
 		 //查询遗漏
-		 LottoDrop lottoDrop = lottoDropMapper.queryLatelyDataByColor();
+		 List<LottoDrop> lottoDrop = lottoDropMapper.getLastNumLottoDrops(1);
 		 List<String> preList = new ArrayList<>();
-		 preList = Arrays.asList(lottoDrop.getPreDrop().split(","));
-		 List<LottoDrop> lottoDrops = lottoDropMapper.queryHeatColdByColor(heatColdParam);
+		 preList = Arrays.asList(lottoDrop.get(0).getPreDrop().split(","));
+		 List<LottoDrop> lottoDrops =null;// lottoDropMapper.queryHeatColdByColor(heatColdParam);
 		 List<LottoHeatColdDTO> lottoDTOs = new ArrayList<>();
 		 if(lottoDrops.size() >= 0) {
 			 Map<Integer,List<String>> mapA = new HashMap<>();
@@ -105,10 +105,10 @@ public class LottoDropService {
 				 Stream<String> sB = listB.stream().filter(l->{return l.equals("0");});
 				 Stream<String> sC = listC.stream().filter(l->{return l.equals("0");});
 				 lottoHeatColdDTO.setNum(i);
-				 lottoHeatColdDTO.setDrop(preList.get(i-1));
-				 lottoHeatColdDTO.setCountA(sA.count()+"");
-				 lottoHeatColdDTO.setCountB(sB.count()+"");
-				 lottoHeatColdDTO.setCountC(sC.count()+"");
+//				 lottoHeatColdDTO.setDrop(preList.get(i-1));
+//				 lottoHeatColdDTO.setCountA(sA.count()+"");
+//				 lottoHeatColdDTO.setCountB(sB.count()+"");
+//				 lottoHeatColdDTO.setCountC(sC.count()+"");
 				 lottoDTOs.add(lottoHeatColdDTO);
 			 }
 			 if(heatColdParam.getOrder() == 1) {
@@ -124,55 +124,58 @@ public class LottoDropService {
      */
 	 public BaseResult<LottoDropDTO> queryChartDataByColor(ChartSetupParam setupParam){
 		 LottoDropDTO lottoDropDTO = new LottoDropDTO();
-		 List<LottoDrop> lottoDrops = lottoDropMapper.queryChartDataByColor(setupParam);
-		 List<LottoNumDTO> drops = new ArrayList<>();
-		 if(lottoDrops.size() >= 0) {
-			 Map<Integer,List<String>> map = new HashMap<>();
-			 lottoDrops.forEach(l->{
-				 LottoNumDTO drop = new LottoNumDTO();
-				 String preDrop = l.getPreDrop();
-				 String postDrop = l.getPostDrop();
-				 drop.setTermNum(l.getTermNum()+"");
-				 List<String> list = new ArrayList<>();
-				 List<String> list2 = new ArrayList<>();
-				 if(setupParam.getColor()==0) {//红
-					 list = Arrays.asList(preDrop.split(","));
-				 }
-				 if(setupParam.getColor()==1) {//蓝
-					 list = Arrays.asList(postDrop.split(","));
-				 }
-				 list2 = list;
-				 if(setupParam.getDrop() == 1) {
-					 for(int j = 0;j<list2.size();j++){
-						 if(!list2.get(j).equals("0")) {
-							 list2.set(j, "");
-						 }
-					 }
-				 }
-				 drop.setNumList(list2);
-				 drops.add(drop);
-				 
-				 //将每个号码的往期遗漏组成list
-				 for (int i = 1; i <= list.size(); i++) {
-					 if(map.get(i)==null) {
-						 List<String> l1 = new ArrayList<>();
-						 l1.add(list.get(i-1));
-						 map.put(i, l1);
-					 }else {
-						 List<String> l1 = map.get(i);
-						 l1.add(list.get(i-1));
-						 map.put(i, l1);
-					 }
-				}
-			 });
-		
-			 lottoDropDTO.setDrop(drops);
-			 //显示计算统计
-			 if(setupParam.getCompute() == 0) {
-				 lottoDropDTO.setCompute(getList(map));
-			 }
-			 
-		 }
+//		 List<LottoDrop> lottoDrops = null;//lottoDropMapper.queryChartDataByColor(setupParam);
+//		 List<LottoNumDTO> drops = new ArrayList<>();
+//		 if(lottoDrops.size() >= 0) {
+//			 Map<Integer,List<String>> map = new HashMap<>();
+//			 lottoDrops.forEach(l->{
+//				 LottoNumDTO drop = new LottoNumDTO();
+//				 String preDrop = l.getPreDrop();
+//				 String postDrop = l.getPostDrop();
+//				 drop.setTermNum(l.getTermNum()+"");
+//				 List<String> list = new ArrayList<>();
+//				 List<String> list2 = new ArrayList<>();
+//				 if(setupParam.getColor()==0) {//红
+//					 list = Arrays.asList(preDrop.split(","));
+//					 list2 = Arrays.asList(preDrop.split(","));
+//				 }
+//				 if(setupParam.getColor()==1) {//蓝
+//					 list = Arrays.asList(postDrop.split(","));
+//					 list2 = Arrays.asList(postDrop.split(","));
+//				 }
+//				 if(setupParam.getDrop() == 1) {
+//					 for(int j = 0;j<list2.size();j++){
+//						 if(!list2.get(j).equals("0")) {
+//							 list2.set(j, "");
+//						 }
+//					 }
+//				 }
+//				 drop.setNumList(list2);
+//				 drops.add(drop);
+//				 
+//				 //将每个号码的往期遗漏组成list
+//				 for (int i = 1; i <= list.size(); i++) {
+//					 if(map.get(i)==null) {
+//						 List<String> l1 = new ArrayList<>();
+//						 l1.add(list.get(i-1));
+//						 map.put(i, l1);
+//					 }else {
+//						 List<String> l1 = map.get(i);
+//						 l1.add(list.get(i-1));
+//						 map.put(i, l1);
+//					 }
+//				}
+//			 });
+//			 if(setupParam.getOrderBY() == 0) {
+//				 Collections.reverse(drops);//顺序反转
+//			 }
+//			 lottoDropDTO.setDrop(drops);
+//			 //显示计算统计
+//			 if(setupParam.getCompute() == 0) {
+//				 lottoDropDTO.setCompute(getList(map));
+//			 }
+//			 
+//		 }
 		 
 		 return ResultGenerator.genSuccessResult("success", lottoDropDTO);
 	 }

@@ -12,11 +12,11 @@ public class LottoDropDTO {
 	@ApiModelProperty(value="遗漏号码")
 	private List<LottoNumDTO> drop;
 	@ApiModelProperty(value="平均遗漏 ")
-	private LottoNumDTO averageData; 
+	private List<String> averageData; 
 	@ApiModelProperty(value="最大遗漏 ")
-	private LottoNumDTO maxData; 
+	private List<String> maxData; 
 	@ApiModelProperty(value="出现次数 ")
-	private LottoNumDTO countNum; 
+	private List<String> countNum; 
 	@ApiModelProperty(value="最大连出 ")
-	private LottoNumDTO maxContinue; 
+	private List<String> maxContinue; 
 }
