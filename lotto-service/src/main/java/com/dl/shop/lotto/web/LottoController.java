@@ -14,16 +14,16 @@ import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.enums.LottoResultEnum;
 import com.dl.lotto.param.ChartSetupParam;
-import com.dl.shop.lotto.service.LottoFirstService;
+import com.dl.shop.lotto.service.LottoService;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/lotto")
-public class LottoFirstController {
+public class LottoController {
 
 	@Resource
-	private LottoFirstService lottoFirstService;
+	private LottoService lottoFirstService;
 
 	
 	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")

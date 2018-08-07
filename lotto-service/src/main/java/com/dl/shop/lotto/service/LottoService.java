@@ -32,7 +32,7 @@ import com.dl.shop.lotto.utils.TermEndDateUtil;
 
 @Service
 @Transactional(value="transactionManager2")
-public class LottoFirstService {
+public class LottoService {
 	@Resource
     private LottoMapper lottoMapper;
 	@Resource
