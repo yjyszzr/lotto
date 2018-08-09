@@ -81,6 +81,7 @@ public class LottoService {
 		 if(CollectionUtils.isNotEmpty(allLottos) && CollectionUtils.isNotEmpty(allLottoDrops)) {
 			 Integer sort = param.getSort();
 			 Integer compute = param.getCompute();
+			 Integer drop = param.getDrop();
 			 lottoChartData = new LottoChartDataDTO();
 			 List<LottoDrop> lottoDrops = allLottoDrops;
 			 List<Lotto> lottos = allLottos;
@@ -95,34 +96,62 @@ public class LottoService {
 				 lottoChartData.setLottoNums(lottoNums);
 				 List<LottoNumDTO> preLottoNums = lottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.preLottoNumDto()).collect(Collectors.toList());
 				 List<LottoNumDTO> postLottoNums = lottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.postLottoNumDto()).collect(Collectors.toList());
+				 //隐藏遗漏
+				 if(drop == 0) {
+					 preLottoNums.forEach(items->{
+						 List<String> list = new ArrayList<>();
+						 items.getNumList().forEach(item->{if(item.equals("0")) {list.add(item);}else{list.add("");}});
+						 items.setNumList(list);
+					 });
+					 postLottoNums.forEach(items->{
+						 List<String> list = new ArrayList<>();
+						 items.getNumList().forEach(item->{if(item.equals("0")) {list.add(item);}else{list.add("");}});
+						 items.setNumList(list);
+					 });
+				 }
 				 LottoDropDTO preLottoDrop = new LottoDropDTO();
 				 preLottoDrop.setDrop(preLottoNums);
 				 LottoDropDTO postLottoDrop = new LottoDropDTO();
 				 postLottoDrop.setDrop(postLottoNums);
 				 lottoChartData.setPreLottoDrop(preLottoDrop);
 				 lottoChartData.setPostLottoDrop(postLottoDrop);
-				 if(compute == 0) {
-					 List<LottoNumDTO> preLottoNums100 = allLottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.preLottoNumDto()).collect(Collectors.toList());
-					 List<LottoNumDTO> postLottoNums100 = allLottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.postLottoNumDto()).collect(Collectors.toList());
-					 initLottoDrop(preLottoDrop,preLottoNums100);
-					 initLottoDrop(postLottoDrop,postLottoNums100);
+				 //显示统计
+				 if(compute == 1) {
+					 List<LottoNumDTO> preLottoNums100 = lottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.preLottoNumDto()).collect(Collectors.toList());
+					 List<LottoNumDTO> postLottoNums100 = lottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.postLottoNumDto()).collect(Collectors.toList());
+					 this.initLottoDrop(preLottoDrop,preLottoNums100);
+					 this.initLottoDrop(postLottoDrop,postLottoNums100);
 				 }
 			 } else {//倒序
 				 List<LottoNumDTO> lottoNums = lottos.parallelStream().sorted((item1,item2)->item2.getTermNum().compareTo(item1.getTermNum())).map(item->item.lottoNumDto()).collect(Collectors.toList());
 				 lottoChartData.setLottoNums(lottoNums);
 				 List<LottoNumDTO> preLottoNums = lottoDrops.parallelStream().sorted((item1,item2)->item2.getTermNum().compareTo(item1.getTermNum())).map(item->item.preLottoNumDto()).collect(Collectors.toList());
 				 List<LottoNumDTO> postLottoNums = lottoDrops.parallelStream().sorted((item1,item2)->item2.getTermNum().compareTo(item1.getTermNum())).map(item->item.postLottoNumDto()).collect(Collectors.toList());
+				 //隐藏遗漏
+				 if(drop == 0) {
+					 preLottoNums.forEach(items->{
+						 List<String> list = new ArrayList<>();
+						 items.getNumList().forEach(item->{if(item.equals("0")) {list.add(item);}else{list.add("");}});
+						 items.setNumList(list);
+					 });
+					 postLottoNums.forEach(items->{
+						 List<String> list = new ArrayList<>();
+						 items.getNumList().forEach(item->{if(item.equals("0")) {list.add(item);}else{list.add("");}});
+						 items.setNumList(list);
+					 });
+				 }
 				 LottoDropDTO preLottoDrop = new LottoDropDTO();
 				 preLottoDrop.setDrop(preLottoNums);
 				 LottoDropDTO postLottoDrop = new LottoDropDTO();
 				 postLottoDrop.setDrop(postLottoNums);
 				 lottoChartData.setPreLottoDrop(preLottoDrop);
 				 lottoChartData.setPostLottoDrop(postLottoDrop);
-				 if(compute == 0) {
+				//显示统计
+				 if(compute == 1) {
 					 List<LottoNumDTO> preLottoNums100 = allLottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.preLottoNumDto()).collect(Collectors.toList());
 					 List<LottoNumDTO> postLottoNums100 = allLottoDrops.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.postLottoNumDto()).collect(Collectors.toList());
-					 initLottoDrop(preLottoDrop,preLottoNums100);
-					 initLottoDrop(postLottoDrop,postLottoNums100);
+					 this.initLottoDrop(preLottoDrop,preLottoNums100);
+					 this.initLottoDrop(postLottoDrop,postLottoNums100);
 				 }
 				 //冷热倒序
 				 Collections.reverse(lottoChartData.getPreHeatColds());//顺序反转
