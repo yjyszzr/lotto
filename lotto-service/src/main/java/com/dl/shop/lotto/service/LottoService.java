@@ -28,7 +28,7 @@ import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
 import com.dl.shop.lotto.model.LottoDrop;
-import com.dl.shop.lotto.utils.TermEndDateUtil;
+import com.dl.shop.lotto.utils.TermDateUtil;
 
 @Service
 @Transactional(value="transactionManager2")
@@ -49,19 +49,21 @@ public class LottoService {
 		 if(lottos.size() >= 0) {
 			 Lotto lastLotto = lottos.get(0);
 			 //@Todo
-			 //判断该期次和当前日期是否匹配???
-			 lottos.sort((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum()));
-			 List<LottoNumDTO> lottoPrizeNumDTOs = lottos.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.lottoNumDto()).collect(Collectors.toList());
-			 //
-			 lottoFirstDTO = new LottoFirstDTO();
-			 lottoFirstDTO.setTerm_num(lastLotto.getTermNum()+1);
-			 lottoFirstDTO.setEndDate(TermEndDateUtil.getChoseEndTime());
-			 lottoFirstDTO.setPrizes(lastLotto.getPrizes());
-			 lottoFirstDTO.setPrizeList(lottoPrizeNumDTOs);
-			 LottoDrop lottoDrop = lottoDropMapper.getLottoDropByTermNum(lastLotto.getTermNum());
-			 if(lottoDrop != null) {
-				 lottoFirstDTO.setPreList(Arrays.asList(lottoDrop.getPreDrop().split(",")));
-				 lottoFirstDTO.setPostList(Arrays.asList(lottoDrop.getPostDrop().split(",")));
+			 //判断该期次和当前日期是否匹配
+			 if(TermDateUtil.isLast(lastLotto.getPrizeDate())) {
+				 lottos.sort((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum()));
+				 List<LottoNumDTO> lottoPrizeNumDTOs = lottos.parallelStream().sorted((item1,item2)->item1.getTermNum().compareTo(item2.getTermNum())).map(item->item.lottoNumDto()).collect(Collectors.toList());
+				 //
+				 lottoFirstDTO = new LottoFirstDTO();
+				 lottoFirstDTO.setTerm_num(lastLotto.getTermNum()+1);
+				 lottoFirstDTO.setEndDate(TermDateUtil.getChoseEndTime());
+				 lottoFirstDTO.setPrizes(lastLotto.getPrizes());
+				 lottoFirstDTO.setPrizeList(lottoPrizeNumDTOs);
+				 LottoDrop lottoDrop = lottoDropMapper.getLottoDropByTermNum(lastLotto.getTermNum());
+				 if(lottoDrop != null) {
+					 lottoFirstDTO.setPreList(Arrays.asList(lottoDrop.getPreDrop().split(",")));
+					 lottoFirstDTO.setPostList(Arrays.asList(lottoDrop.getPostDrop().split(",")));
+				 }
 			 }
 		 }
 		 return lottoFirstDTO;
@@ -88,6 +90,12 @@ public class LottoService {
 			 if(count < 100) {
 				 lottoDrops = allLottoDrops.subList(0, count);
 				 lottos = allLottos.subList(0, count);
+			 }
+			 //添加期次与截止时间
+			 Lotto lastLotto = lottos.get(0);
+			 if(TermDateUtil.isLast(lastLotto.getPrizeDate())) {
+				 int term = lastLotto.getTermNum()+1;
+				 lottoChartData.setStopTime(term+"|"+TermDateUtil.getChoseEndTime());
 			 }
 			 //冷热数据
 			 this.initHeatColds(allLottos, allLottoDrops.get(0), lottoChartData);

@@ -19,5 +19,7 @@ public class LottoChartDataDTO {
 	private List<LottoHeatColdDTO> preHeatColds;
 	@ApiModelProperty(value=" 蓝球冷热")
 	private List<LottoHeatColdDTO> postHeatColds;
+	@ApiModelProperty(value=" 期次截止时间")
+	private String stopTime;
 	 
 }
