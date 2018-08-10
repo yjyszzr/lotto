@@ -13,4 +13,7 @@ public class ChartSetupParam {
 	private Integer compute=1;
 	@ApiModelProperty(value="排序, 0正序1倒序，默认为0")
 	private Integer sort=0;
+	@ApiModelProperty(value="Tab页, 1历史开奖2红球走势3篮球走势4红球冷热5篮球冷热，默认为0全部")
+	private Integer tab=0;
+	
 }
