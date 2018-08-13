@@ -58,14 +58,14 @@ public class LottoDrop {
 	public LottoNumDTO preLottoNumDto() {
 		LottoNumDTO dto = new LottoNumDTO();
 		dto.setNumList(Arrays.asList(this.getPreDrop().split(",")));
-		dto.setTermNum("第"+this.getTermNum()+"期");
+		dto.setTermNum(this.getTermNum()+"期");
 		return dto;
 	}
 	
 	public LottoNumDTO postLottoNumDto() {
 		LottoNumDTO dto = new LottoNumDTO();
 		dto.setNumList(Arrays.asList(this.getPostDrop().split(",")));
-		dto.setTermNum("第"+this.getTermNum()+"期");
+		dto.setTermNum(this.getTermNum()+"期");
 		return dto;
 	}
 	

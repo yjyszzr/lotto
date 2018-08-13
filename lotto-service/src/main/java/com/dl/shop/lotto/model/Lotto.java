@@ -69,7 +69,7 @@ public class Lotto {
 	public LottoNumDTO lottoNumDto() {
 		LottoNumDTO dto = new LottoNumDTO();
 		dto.setNumList(Arrays.asList(this.getPrizeNum().split(",")));
-		dto.setTermNum("第"+this.getTermNum()+"期");
+		dto.setTermNum(this.getTermNum()+"期");
 		return dto;
 	}
 	
