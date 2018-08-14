@@ -24,6 +24,7 @@ import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.dto.LottoHeatColdDTO;
 import com.dl.lotto.dto.LottoNumDTO;
 import com.dl.lotto.param.ChartSetupParam;
+import com.dl.lotto.param.SaveBetInfoParam;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
@@ -330,5 +331,10 @@ public class LottoService {
 		lottoDrop.setCountNum(countList);
 		lottoDrop.setMaxContinue(continuityList);
 		
+	}
+	//校验投注信息
+	public boolean checkBetInfo(SaveBetInfoParam param) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
