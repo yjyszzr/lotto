@@ -136,6 +136,11 @@ public class LottoController {
 //		dto.setSurplus(surplus);
 //		String forecastMoney = betInfo.getMinBonus() + "~" + betInfo.getMaxBonus();
 //		dto.setThirdPartyPaid(thirdPartyPaid);
+		if(param.getIsAppend()==0) {
+			dto.setPlayType("00");
+		}else {
+			dto.setPlayType("05");
+		}
 		dto.setForecastMoney("");
 		String requestFrom = "0";
 		UserDeviceInfo userDevice = SessionUtil.getUserDevice();
