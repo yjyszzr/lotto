@@ -123,7 +123,7 @@ public class LottoController {
 			dizqUserBetCellInfoDTO.setMatchTeam("");
 			dizqUserBetCellInfoDTO.setPlayCode("");
 			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
-			dizqUserBetCellInfoDTO.setPlayType(betInfo.getPlayType());
+			dizqUserBetCellInfoDTO.setPlayType("0"+betInfo.getPlayType());
 			betDetailInfos.add(dizqUserBetCellInfoDTO);
 		}
 		//缓存订单支付信息
