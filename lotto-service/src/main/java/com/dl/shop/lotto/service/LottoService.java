@@ -335,6 +335,6 @@ public class LottoService {
 	//校验投注信息
 	public boolean checkBetInfo(SaveBetInfoParam param) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }
