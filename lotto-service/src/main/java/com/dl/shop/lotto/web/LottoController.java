@@ -147,7 +147,7 @@ public class LottoController {
 		dto.setBetDetailInfos(betDetailInfos);
 		dto.setIssue(issue);
 		String dtoJson = JSONHelper.bean2json(dto);
-		String keyStr = "bet_lotto_info_" + SessionUtil.getUserId() +"_"+ System.currentTimeMillis();
+		String keyStr = "bet_info_" + SessionUtil.getUserId() +"_"+ System.currentTimeMillis();
 		String payToken = "lotto_" + MD5Util.crypt(keyStr);
 		stringRedisTemplate.opsForValue().set(payToken, dtoJson, ProjectConstant.BET_INFO_EXPIRE_TIME, TimeUnit.MINUTES);
 		return ResultGenerator.genSuccessResult("success", payToken);
