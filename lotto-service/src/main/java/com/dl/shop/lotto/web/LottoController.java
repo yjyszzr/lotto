@@ -1,11 +1,8 @@
 package com.dl.shop.lotto.web;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dl.base.enums.MatchPlayTypeEnum;
 import com.dl.base.model.UserDeviceInfo;
 import com.dl.base.param.EmptyParam;
 import com.dl.base.result.BaseResult;
@@ -25,8 +21,6 @@ import com.dl.base.result.ResultGenerator;
 import com.dl.base.util.JSONHelper;
 import com.dl.base.util.MD5Util;
 import com.dl.base.util.SessionUtil;
-import com.dl.lotto.dto.BetPayInfoDTO;
-import com.dl.lotto.dto.DIZQUserBetLottoDTO;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
@@ -35,12 +29,10 @@ import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.SaveBetInfoParam;
 import com.dl.member.api.IUserBonusService;
 import com.dl.member.api.IUserService;
-import com.dl.member.dto.UserBonusDTO;
-import com.dl.member.dto.UserDTO;
-import com.dl.member.param.BonusLimitConditionParam;
-import com.dl.member.param.StrParam;
 import com.dl.shop.lotto.core.ProjectConstant;
 import com.dl.shop.lotto.service.LottoService;
+import com.dl.shop.payment.dto.UserBetDetailInfoDTO;
+import com.dl.shop.payment.dto.UserBetPayInfoDTO;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -80,7 +72,7 @@ public class LottoController {
 	
 	@ApiOperation(value = "投注确认", notes = "投注确认")
 	@PostMapping("/saveBetInfo")
-	public BaseResult<BetPayInfoDTO> saveBetInfo(@RequestBody SaveBetInfoParam param) {
+	public BaseResult<String> saveBetInfo(@RequestBody SaveBetInfoParam param) {
 		String orderMoneyStr = param.getOrderMoney();
 		if(StringUtils.isBlank(orderMoneyStr)) {
 			return ResultGenerator.genResult(LottoResultEnum.PARAM_ERROR.getCode(), LottoResultEnum.PARAM_ERROR.getMsg());
@@ -91,12 +83,12 @@ public class LottoController {
 			return ResultGenerator.genResult(LottoResultEnum.PARAM_ERROR.getCode(), LottoResultEnum.PARAM_ERROR.getMsg());
 		}
 		Integer ticketNum = betInfos.size();
-		//用户信息
+		/*//用户信息
 		StrParam strParam = new StrParam();
 		BaseResult<UserDTO> userInfoExceptPassRst = userService.userInfoExceptPass(strParam);
 		if(userInfoExceptPassRst.getCode() != 0 || null == userInfoExceptPassRst.getData()) {
 			return ResultGenerator.genResult(LottoResultEnum.OPTION_ERROR.getCode(), LottoResultEnum.OPTION_ERROR.getMsg());
-		}
+		}*/
 		boolean isOk = lottoFirstService.checkBetInfo(param);
 		if(!isOk) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_INFO_ERROR.getCode(), LottoResultEnum.BET_INFO_ERROR.getMsg());
@@ -119,58 +111,32 @@ public class LottoController {
 		if(orderMoney > canBetMoney) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_MATCH_STOP.getCode(), LottoResultEnum.BET_MATCH_STOP.getMsg());
 		}*/
-		String totalMoney = userInfoExceptPassRst.getData().getTotalMoney();
-		Double userTotalMoney = Double.valueOf(totalMoney);
-		//红包包
-		BonusLimitConditionParam bonusLimitConditionParam = new BonusLimitConditionParam();
-		bonusLimitConditionParam.setOrderMoneyPaid(BigDecimal.valueOf(orderMoney));
-		BaseResult<List<UserBonusDTO>> userBonusListRst = userBonusService.queryValidBonusList(bonusLimitConditionParam);
-		if(userBonusListRst.getCode() != 0) {
-			return ResultGenerator.genResult(LottoResultEnum.OPTION_ERROR.getCode(), LottoResultEnum.OPTION_ERROR.getMsg());
+		String issue = "";
+		List<UserBetDetailInfoDTO> betDetailInfos = new ArrayList<UserBetDetailInfoDTO>(betInfos.size());
+		for(LottoBetInfoDTO betInfo: betInfos) {
+			UserBetDetailInfoDTO dizqUserBetCellInfoDTO = new UserBetDetailInfoDTO();
+			dizqUserBetCellInfoDTO.setMatchId(0);
+			dizqUserBetCellInfoDTO.setChangci("");
+			dizqUserBetCellInfoDTO.setIsDan(0);
+			dizqUserBetCellInfoDTO.setLotteryClassifyId(param.getLotteryClassifyId());
+			dizqUserBetCellInfoDTO.setLotteryPlayClassifyId(param.getLotteryPlayClassifyId());
+			dizqUserBetCellInfoDTO.setMatchTeam("");
+			dizqUserBetCellInfoDTO.setPlayCode("");
+			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
+			dizqUserBetCellInfoDTO.setPlayType(betInfo.getPlayType());
+			betDetailInfos.add(dizqUserBetCellInfoDTO);
 		}
-		
-		List<UserBonusDTO> userBonusList = userBonusListRst.getData();
-		UserBonusDTO userBonusDto = null;
-		if(!CollectionUtils.isEmpty(userBonusList)) {
-			String bonusIdStr = param.getBonusId();
-			if(StringUtils.isNotBlank(bonusIdStr) && Integer.valueOf(bonusIdStr) != 0) {//有红包id
-				if(Integer.valueOf(bonusIdStr) != -1) {
-					Optional<UserBonusDTO> findFirst = userBonusList.stream().filter(dto->dto.getUserBonusId().equals(Integer.valueOf(bonusIdStr))).findFirst();
-					userBonusDto = findFirst.isPresent()?findFirst.get():null;
-				}
-			}else {//没有传红包id
-				List<UserBonusDTO> userBonuses = userBonusList.stream().filter(dto->{
-					double minGoodsAmount = dto.getBonusPrice().doubleValue();
-					return orderMoney < minGoodsAmount ? false : true;
-				}).sorted((n1,n2)->n2.getBonusPrice().compareTo(n1.getBonusPrice()))
-						.collect(Collectors.toList());
-				if(userBonuses.size() > 0) {
-					userBonusDto = userBonuses.get(0);
-				}
-			}
-		}
-		String bonusId = userBonusDto != null?userBonusDto.getUserBonusId().toString():null;
-		Double bonusAmount = userBonusDto!=null?userBonusDto.getBonusPrice().doubleValue():0.0;
-		Double amountTemp = orderMoney - bonusAmount;//红包扣款后的金额
-		Double surplus = 0.0;
-		Double thirdPartyPaid = 0.0;
-		if(amountTemp < 0) {//红包大于订单金额
-			bonusAmount = orderMoney;
-		}else {
-			surplus = userTotalMoney>amountTemp?amountTemp:userTotalMoney;
-			thirdPartyPaid = amountTemp - surplus;
-		}
-		
 		//缓存订单支付信息
-		DIZQUserBetLottoDTO dto = new DIZQUserBetLottoDTO(param);
+		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
 		dto.setBetNum(betNum);
-		dto.setMoney(orderMoney);
+		dto.setOrderMoney(orderMoney);
 		dto.setTicketNum(ticketNum);
-		dto.setBonusAmount(bonusAmount);
-		dto.setBonusId(bonusId);
-		dto.setSurplus(surplus);
+//		dto.setBonusAmount(bonusAmount);
+//		dto.setBonusId(bonusId);
+//		dto.setSurplus(surplus);
 //		String forecastMoney = betInfo.getMinBonus() + "~" + betInfo.getMaxBonus();
-		dto.setThirdPartyPaid(thirdPartyPaid);
+//		dto.setThirdPartyPaid(thirdPartyPaid);
+		dto.setForecastMoney("");
 		String requestFrom = "0";
 		UserDeviceInfo userDevice = SessionUtil.getUserDevice();
 		if(userDevice != null) {
@@ -178,19 +144,12 @@ public class LottoController {
 		}
 		dto.setRequestFrom(requestFrom);
 		dto.setUserId(SessionUtil.getUserId());
+		dto.setBetDetailInfos(betDetailInfos);
+		dto.setIssue(issue);
 		String dtoJson = JSONHelper.bean2json(dto);
 		String keyStr = "bet_lotto_info_" + SessionUtil.getUserId() +"_"+ System.currentTimeMillis();
-		String key = "lotto_" + MD5Util.crypt(keyStr);
-		stringRedisTemplate.opsForValue().set(key, dtoJson, ProjectConstant.BET_INFO_EXPIRE_TIME, TimeUnit.MINUTES);
-		//返回页面信息
-		BetPayInfoDTO betPlayInfoDTO = new BetPayInfoDTO();
-		betPlayInfoDTO.setPayToken(key);
-		betPlayInfoDTO.setBonusAmount(String.format("%.2f", bonusAmount));
-		betPlayInfoDTO.setBonusId(bonusId);
-		betPlayInfoDTO.setBonusList(userBonusList);
-		betPlayInfoDTO.setOrderMoney(orderMoneyStr);
-		betPlayInfoDTO.setSurplus(String.format("%.2f", surplus));
-		betPlayInfoDTO.setThirdPartyPaid(String.format("%.2f", thirdPartyPaid));
-		return ResultGenerator.genSuccessResult("success", betPlayInfoDTO);
+		String payToken = "lotto_" + MD5Util.crypt(keyStr);
+		stringRedisTemplate.opsForValue().set(payToken, dtoJson, ProjectConstant.BET_INFO_EXPIRE_TIME, TimeUnit.MINUTES);
+		return ResultGenerator.genSuccessResult("success", payToken);
 	}
 }
