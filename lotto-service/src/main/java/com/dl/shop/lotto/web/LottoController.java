@@ -18,6 +18,7 @@ import com.dl.base.model.UserDeviceInfo;
 import com.dl.base.param.EmptyParam;
 import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
+import com.dl.base.util.DateUtilNew;
 import com.dl.base.util.JSONHelper;
 import com.dl.base.util.MD5Util;
 import com.dl.base.util.SessionUtil;
@@ -31,6 +32,7 @@ import com.dl.member.api.IUserBonusService;
 import com.dl.member.api.IUserService;
 import com.dl.shop.lotto.core.ProjectConstant;
 import com.dl.shop.lotto.service.LottoService;
+import com.dl.shop.lotto.utils.TermDateUtil;
 import com.dl.shop.payment.dto.UserBetDetailInfoDTO;
 import com.dl.shop.payment.dto.UserBetPayInfoDTO;
 
@@ -98,7 +100,7 @@ public class LottoController {
 		}
 		
 		
-		String issue = "";
+		String issue = lottoFirstService.getLatelyTerm();
 		int lotteryPlayClassifyId ;
 		//缓存订单支付信息
 		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
@@ -117,7 +119,6 @@ public class LottoController {
 		dto.setTimes(param.getTimes());
 		
 		//比赛时间
-		
 		dto.setForecastMoney("");
 		String requestFrom = "0";
 		UserDeviceInfo userDevice = SessionUtil.getUserDevice();
@@ -140,7 +141,7 @@ public class LottoController {
 			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
 			dizqUserBetCellInfoDTO.setPlayType("0"+betInfo.getPlayType());
 			dizqUserBetCellInfoDTO.setFixedodds("");
-			dizqUserBetCellInfoDTO.setMatchTime(1111);
+			dizqUserBetCellInfoDTO.setMatchTime((int)TermDateUtil.getTermEndDate());
 			betDetailInfos.add(dizqUserBetCellInfoDTO);
 		}
 		dto.setBetDetailInfos(betDetailInfos);

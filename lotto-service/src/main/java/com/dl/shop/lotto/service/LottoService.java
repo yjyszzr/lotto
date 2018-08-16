@@ -39,7 +39,11 @@ public class LottoService {
 	@Resource
 	private LottoDropMapper lottoDropMapper;
 	
-	  
+	public String getLatelyTerm() {
+		List<Lotto> lottos = lottoMapper.getLastNumLottos(1);
+		int term = lottos.get(0).getTermNum()+1;
+		return term+"";
+	}
 	/**
      * 投注页数据
      */
