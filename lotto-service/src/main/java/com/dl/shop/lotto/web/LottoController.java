@@ -83,12 +83,7 @@ public class LottoController {
 			return ResultGenerator.genResult(LottoResultEnum.PARAM_ERROR.getCode(), LottoResultEnum.PARAM_ERROR.getMsg());
 		}
 		Integer ticketNum = betInfos.size();
-		/*//用户信息
-		StrParam strParam = new StrParam();
-		BaseResult<UserDTO> userInfoExceptPassRst = userService.userInfoExceptPass(strParam);
-		if(userInfoExceptPassRst.getCode() != 0 || null == userInfoExceptPassRst.getData()) {
-			return ResultGenerator.genResult(LottoResultEnum.OPTION_ERROR.getCode(), LottoResultEnum.OPTION_ERROR.getMsg());
-		}*/
+		
 		boolean isOk = lottoFirstService.checkBetInfo(param);
 		if(!isOk) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_INFO_ERROR.getCode(), LottoResultEnum.BET_INFO_ERROR.getMsg());
@@ -101,46 +96,28 @@ public class LottoController {
 		if(betNum >= 10000 || betNum < 0) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_NUMBER_LIMIT.getCode(), LottoResultEnum.BET_NUMBER_LIMIT.getMsg());
 		}
-	/*	String betMoney = betInfo.getMoney();
-		Double orderMoney = Double.valueOf(betMoney);
-		Double minBetMoney = lotteryMatchService.getMinBetMoney();
-		if(orderMoney < minBetMoney) {
-			return ResultGenerator.genResult(LottoResultEnum.BET_MATCH_WC.getCode(), "最低投注"+minBetMoney.intValue()+"元!");
-		}
-		int canBetMoney = lotteryMatchService.canBetMoney();
-		if(orderMoney > canBetMoney) {
-			return ResultGenerator.genResult(LottoResultEnum.BET_MATCH_STOP.getCode(), LottoResultEnum.BET_MATCH_STOP.getMsg());
-		}*/
+		
+		
 		String issue = "";
-		List<UserBetDetailInfoDTO> betDetailInfos = new ArrayList<UserBetDetailInfoDTO>(betInfos.size());
-		for(LottoBetInfoDTO betInfo: betInfos) {
-			UserBetDetailInfoDTO dizqUserBetCellInfoDTO = new UserBetDetailInfoDTO();
-			dizqUserBetCellInfoDTO.setMatchId(0);
-			dizqUserBetCellInfoDTO.setChangci("");
-			dizqUserBetCellInfoDTO.setIsDan(0);
-			dizqUserBetCellInfoDTO.setLotteryClassifyId(param.getLotteryClassifyId());
-			dizqUserBetCellInfoDTO.setLotteryPlayClassifyId(param.getLotteryPlayClassifyId());
-			dizqUserBetCellInfoDTO.setMatchTeam("");
-			dizqUserBetCellInfoDTO.setPlayCode("");
-			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
-			dizqUserBetCellInfoDTO.setPlayType("0"+betInfo.getPlayType());
-			betDetailInfos.add(dizqUserBetCellInfoDTO);
-		}
+		int lotteryPlayClassifyId ;
 		//缓存订单支付信息
 		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
+		dto.setLotteryClassifyId(2);
+		if(param.getIsAppend()==0) {
+			lotteryPlayClassifyId = 8;
+			dto.setPlayType("0");
+		}else {
+			lotteryPlayClassifyId = 8;
+			dto.setPlayType("5");
+		}
+		dto.setLotteryPlayClassifyId(lotteryPlayClassifyId);
 		dto.setBetNum(betNum);
 		dto.setOrderMoney(orderMoney);
 		dto.setTicketNum(ticketNum);
-//		dto.setBonusAmount(bonusAmount);
-//		dto.setBonusId(bonusId);
-//		dto.setSurplus(surplus);
-//		String forecastMoney = betInfo.getMinBonus() + "~" + betInfo.getMaxBonus();
-//		dto.setThirdPartyPaid(thirdPartyPaid);
-		if(param.getIsAppend()==0) {
-			dto.setPlayType("00");
-		}else {
-			dto.setPlayType("05");
-		}
+		dto.setTimes(param.getTimes());
+		
+		//比赛时间
+		
 		dto.setForecastMoney("");
 		String requestFrom = "0";
 		UserDeviceInfo userDevice = SessionUtil.getUserDevice();
@@ -149,8 +126,24 @@ public class LottoController {
 		}
 		dto.setRequestFrom(requestFrom);
 		dto.setUserId(SessionUtil.getUserId());
-		dto.setBetDetailInfos(betDetailInfos);
 		dto.setIssue(issue);
+		List<UserBetDetailInfoDTO> betDetailInfos = new ArrayList<UserBetDetailInfoDTO>(betInfos.size());
+		for(LottoBetInfoDTO betInfo: betInfos) {
+			UserBetDetailInfoDTO dizqUserBetCellInfoDTO = new UserBetDetailInfoDTO();
+			dizqUserBetCellInfoDTO.setMatchId(0);
+			dizqUserBetCellInfoDTO.setChangci("");
+			dizqUserBetCellInfoDTO.setIsDan(0);
+			dizqUserBetCellInfoDTO.setLotteryClassifyId(2);
+			dizqUserBetCellInfoDTO.setLotteryPlayClassifyId(lotteryPlayClassifyId);
+			dizqUserBetCellInfoDTO.setMatchTeam("");
+			dizqUserBetCellInfoDTO.setPlayCode("");
+			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
+			dizqUserBetCellInfoDTO.setPlayType("0"+betInfo.getPlayType());
+			dizqUserBetCellInfoDTO.setFixedodds("");
+			dizqUserBetCellInfoDTO.setMatchTime(1111);
+			betDetailInfos.add(dizqUserBetCellInfoDTO);
+		}
+		dto.setBetDetailInfos(betDetailInfos);
 		String dtoJson = JSONHelper.bean2json(dto);
 		String keyStr = "bet_info_" + SessionUtil.getUserId() +"_"+ System.currentTimeMillis();
 		String payToken = "lotto_" + MD5Util.crypt(keyStr);

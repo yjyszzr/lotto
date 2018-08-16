@@ -44,14 +44,14 @@ public class DIZQUserBetLottoDTO {
 	}
 	public DIZQUserBetLottoDTO(SaveBetInfoParam param) {
 		this.times = param.getTimes();
-		this.lotteryClassifyId = param.getLotteryClassifyId();
-		this.lotteryPlayClassifyId = param.getLotteryPlayClassifyId();
+//		this.lotteryClassifyId = param.getLotteryClassifyId();
+//		this.lotteryPlayClassifyId = param.getLotteryPlayClassifyId();
 		this.bonusId = param.getBonusId();
 		this.betNum = param.getBetNum();
 		this.orderMoney = param.getOrderMoney();
 		this.isAppend = param.getIsAppend();
-		this.termNum = param.getTermNum();
-		this.matchTime = param.getMatchTime();
+//		this.termNum = param.getTermNum();
+//		this.matchTime = param.getMatchTime();
 		this.betInfos = param.getBetInfos();
 	}
 	
