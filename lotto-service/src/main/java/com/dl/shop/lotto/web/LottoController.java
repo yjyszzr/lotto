@@ -139,7 +139,7 @@ public class LottoController {
 			dizqUserBetCellInfoDTO.setMatchTeam("");
 			dizqUserBetCellInfoDTO.setPlayCode("");
 			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
-			dizqUserBetCellInfoDTO.setPlayType("0"+betInfo.getPlayType());
+			dizqUserBetCellInfoDTO.setBetType("0"+betInfo.getPlayType());
 			dizqUserBetCellInfoDTO.setFixedodds("");
 			dizqUserBetCellInfoDTO.setMatchTime((int)TermDateUtil.getTermEndDate());
 			betDetailInfos.add(dizqUserBetCellInfoDTO);
