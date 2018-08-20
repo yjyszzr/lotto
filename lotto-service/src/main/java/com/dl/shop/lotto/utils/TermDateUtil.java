@@ -11,7 +11,7 @@ public class TermDateUtil {
 	private static  LocalTime TIME_PRIZE = LocalTime.of(20, 30, 0);
 	private static  LocalTime TIME_CHOSE = LocalTime.of(19, 30, 0);
 	public  final static DateTimeFormatter md_sdf = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-	public  final static DateTimeFormatter ymd_sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	public  final static DateTimeFormatter ymd_sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 //	public static void main(String[] args) {
 //		System.out.println(getTermEndTime());
