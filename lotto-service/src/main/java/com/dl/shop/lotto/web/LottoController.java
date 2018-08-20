@@ -102,7 +102,7 @@ public class LottoController {
 		//投注时间
 		LocalDateTime stopTime = TermDateUtil.getChoseEndDateTime();
 		LocalDateTime nowTime = LocalDateTime.now();
-		if(nowTime.isBefore(stopTime)) {
+		if(nowTime.isAfter(stopTime)) {
 			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
 		}
 		
