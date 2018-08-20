@@ -11,7 +11,7 @@ public class TermDateUtil {
 	private static  LocalTime TIME_PRIZE = LocalTime.of(20, 30, 0);
 	private static  LocalTime TIME_CHOSE = LocalTime.of(19, 30, 0);
 	public  final static DateTimeFormatter md_sdf = DateTimeFormatter.ofPattern("MM-dd HH:mm");
-	public  final static DateTimeFormatter ymd_sdf = DateTimeFormatter.ofPattern("YY-MM-dd HH:mm");
+	public  final static DateTimeFormatter ymd_sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 //	public static void main(String[] args) {
 //		System.out.println(getTermEndTime());
@@ -26,6 +26,13 @@ public class TermDateUtil {
 		LocalDateTime l = getLocalDateTime(TIME_CHOSE);
 		return l.format(md_sdf);
 	}
+	/**
+	 * 返回指定格式投注截止时间(MM-dd HH:mm)
+	 * @return
+	 */
+	public static  LocalDateTime getChoseEndDateTime() {
+		return getLocalDateTime(TIME_CHOSE);
+	}
 	
 	/**
 	 * 返回指定格式开奖时间(MM-dd HH:mm)
@@ -37,7 +44,7 @@ public class TermDateUtil {
 	}
 	
 	/**
-	 * 返回指定格式开奖时间(YY-MM-dd HH:mm)
+	 * 返回指定格式开奖时间long(yyyy-MM-dd HH:mm)
 	 * @return
 	 */
 	public static long getTermEndDate() {

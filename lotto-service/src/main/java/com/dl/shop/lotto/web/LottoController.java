@@ -1,5 +1,6 @@
 package com.dl.shop.lotto.web;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -98,7 +99,12 @@ public class LottoController {
 		if(betNum >= 10000 || betNum < 0) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_NUMBER_LIMIT.getCode(), LottoResultEnum.BET_NUMBER_LIMIT.getMsg());
 		}
-		
+		//投注时间
+		LocalDateTime stopTime = TermDateUtil.getChoseEndDateTime();
+		LocalDateTime nowTime = LocalDateTime.now();
+		if(nowTime.isBefore(stopTime)) {
+			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+		}
 		
 		String issue = lottoFirstService.getLatelyTerm();
 		int lotteryPlayClassifyId ;
@@ -118,7 +124,6 @@ public class LottoController {
 		dto.setTicketNum(ticketNum);
 		dto.setTimes(param.getTimes());
 		
-		//比赛时间
 		dto.setForecastMoney("");
 		String requestFrom = "0";
 		UserDeviceInfo userDevice = SessionUtil.getUserDevice();

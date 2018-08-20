@@ -1,5 +1,6 @@
 package com.dl.shop.lotto.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
+import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoDTO;
 import com.dl.lotto.dto.LottoDropDTO;
@@ -31,6 +33,9 @@ import com.dl.shop.lotto.model.Lotto;
 import com.dl.shop.lotto.model.LottoDrop;
 import com.dl.shop.lotto.utils.TermDateUtil;
 
+
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Service
 @Transactional(value="transactionManager2")
 public class LottoService {
@@ -336,9 +341,30 @@ public class LottoService {
 		lottoDrop.setMaxContinue(continuityList);
 		
 	}
-	//校验投注信息
+	/**
+	 * 校验投注信息
+	 * @param param
+	 * @return
+	 */
 	public boolean checkBetInfo(SaveBetInfoParam param) {
 		// TODO Auto-generated method stub
+		boolean isOK = true;
+		List<LottoBetInfoDTO> betInfos = param.getBetInfos();
+		//是否选了号码
+		if(betInfos.size()==0) {
+			return false;
+		}
+		for (int i = 0; i < betInfos.size(); i++) {
+			LottoBetInfoDTO betInfo = betInfos.get(i);
+			String data = betInfo.getBetInfo();
+			String[] datas = data.split("\\|");
+			if(datas[0].length()<5 || datas[1].length() <2) {
+				log.error("投注内容错误。"+data);
+				return false;
+			}
+		}
+		
+		
 		return true;
 	}
 }
