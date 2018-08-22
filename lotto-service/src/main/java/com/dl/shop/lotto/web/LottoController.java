@@ -91,14 +91,14 @@ public class LottoController {
 		if(!isOk) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_INFO_ERROR.getCode(), LottoResultEnum.BET_INFO_ERROR.getMsg());
 		}
-		Double maxBetAmount = 0.0;
-		if(maxBetAmount >= 20000) {
-			return ResultGenerator.genResult(LottoResultEnum.BET_MONEY_LIMIT.getCode(), LottoResultEnum.BET_MONEY_LIMIT.getMsg());
-		}
+//		Double maxBetAmount = 0.0;
+//		if(maxBetAmount >= 20000) {
+//			return ResultGenerator.genResult(LottoResultEnum.BET_MONEY_LIMIT.getCode(), LottoResultEnum.BET_MONEY_LIMIT.getMsg());
+//		}
 		int betNum = param.getBetNum();
-		if(betNum >= 10000 || betNum < 0) {
-			return ResultGenerator.genResult(LottoResultEnum.BET_NUMBER_LIMIT.getCode(), LottoResultEnum.BET_NUMBER_LIMIT.getMsg());
-		}
+//		if(betNum >= 10000 || betNum < 0) {
+//			return ResultGenerator.genResult(LottoResultEnum.BET_NUMBER_LIMIT.getCode(), LottoResultEnum.BET_NUMBER_LIMIT.getMsg());
+//		}
 		//投注时间
 		LocalDateTime stopTime = TermDateUtil.getChoseEndDateTime();
 		LocalDateTime nowTime = LocalDateTime.now();

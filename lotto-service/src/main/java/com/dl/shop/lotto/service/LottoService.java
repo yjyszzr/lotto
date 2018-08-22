@@ -31,8 +31,8 @@ import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
 import com.dl.shop.lotto.model.LottoDrop;
+import com.dl.shop.lotto.utils.MathUtil;
 import com.dl.shop.lotto.utils.TermDateUtil;
-
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
@@ -354,16 +354,72 @@ public class LottoService {
 		if(betInfos.size()==0) {
 			return false;
 		}
+		int betNumSum = 0;//注数
 		for (int i = 0; i < betInfos.size(); i++) {
-			LottoBetInfoDTO betInfo = betInfos.get(i);
-			String data = betInfo.getBetInfo();
-			String[] datas = data.split("\\|");
-			if(datas[0].length()<5 || datas[1].length() <2) {
-				log.error("投注内容错误。"+data);
+			String info = betInfos.get(i).getBetInfo();
+			int betNum = 0;
+			if(info.contains("$")) {
+				List<String> redDanCathectics = new ArrayList<>();
+				List<String> blueDanCathectics = new  ArrayList<>();
+				List<String> redTuoCathectics = new ArrayList<>();
+				List<String> blueTuoCathectics = new  ArrayList<>();
+				String[] nums = info.split("\\|");
+				if(nums.length<2) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
+				if(nums[0].contains("$")) {//如果前区有$
+					String[] preNums = nums[0].split("\\$");
+					if(preNums.length<2) {
+						log.error("投注内容错误。"+info);
+						return false;
+					}
+					redDanCathectics = Arrays.asList(preNums[0].split(","));
+					redTuoCathectics = Arrays.asList(preNums[1].split(","));
+				}
+				if(nums[1].contains("$")) {//如果前区有$
+					String[] postNums = nums[1].split("\\$");
+					if(postNums.length<2) {
+						log.error("投注内容错误。"+info);
+						return false;
+					}
+					blueDanCathectics = Arrays.asList(postNums[0].split(","));
+					blueTuoCathectics = Arrays.asList(postNums[1].split(","));
+				}else {
+					blueTuoCathectics = Arrays.asList(nums[1].split(","));
+				}
+				betNum = MathUtil.getDanTuoCathecticsCount(redTuoCathectics.size(), redDanCathectics.size(), blueTuoCathectics.size(), blueDanCathectics.size());
+			}else {
+				String[] nums = info.split("\\|");
+				if(nums.length<2) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
+				List<String> preList = Arrays.asList(nums[0].split(","));
+				List<String> postList = Arrays.asList(nums[1].split(","));
+				betNum = MathUtil.getCathecticsCount(preList.size(), postList.size());
+			}
+			if(betInfos.get(i).getBetNum()!=betNum) {
+				log.error("投注内容错误。"+info);
 				return false;
 			}
+			betNumSum = betNumSum + betNum;
 		}
-		
+		if(param.getBetNum()!=betNumSum) {
+			log.error("投注内容错误。");
+			return false;
+		}
+		int amount = 0;//金额
+		if(param.getIsAppend()==0) {
+			amount = betNumSum*2*param.getTimes();
+		}else {
+			amount = betNumSum*3*param.getTimes();
+		}
+		if(Integer.parseInt(param.getOrderMoney())!= amount) {
+			log.error("投注内容错误。");
+			return false;
+		}
+		 
 		
 		return true;
 	}
