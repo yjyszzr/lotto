@@ -16,11 +16,8 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.dl.base.result.BaseResult;
-import com.dl.base.result.ResultGenerator;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
-import com.dl.lotto.dto.LottoDTO;
 import com.dl.lotto.dto.LottoDropDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.dto.LottoHeatColdDTO;
@@ -354,11 +351,15 @@ public class LottoService {
 		if(betInfos.size()==0) {
 			return false;
 		}
-		int betNumSum = 0;//注数
+		int betNumSum = 0;//订单总注数
 		for (int i = 0; i < betInfos.size(); i++) {
 			String info = betInfos.get(i).getBetInfo();
-			int betNum = 0;
+			int betNum = 0;//单张票注数
 			if(info.contains("$")) {
+				if(betInfos.get(i).getPlayType()!=2) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
 				List<String> redDanCathectics = new ArrayList<>();
 				List<String> blueDanCathectics = new  ArrayList<>();
 				List<String> redTuoCathectics = new ArrayList<>();
@@ -377,7 +378,7 @@ public class LottoService {
 					redDanCathectics = Arrays.asList(preNums[0].split(","));
 					redTuoCathectics = Arrays.asList(preNums[1].split(","));
 				}
-				if(nums[1].contains("$")) {//如果前区有$
+				if(nums[1].contains("$")) {//如果后区有$
 					String[] postNums = nums[1].split("\\$");
 					if(postNums.length<2) {
 						log.error("投注内容错误。"+info);
@@ -389,6 +390,22 @@ public class LottoService {
 					blueTuoCathectics = Arrays.asList(nums[1].split(","));
 				}
 				betNum = MathUtil.getDanTuoCathecticsCount(redTuoCathectics.size(), redDanCathectics.size(), blueTuoCathectics.size(), blueDanCathectics.size());
+				//单票注数校验
+				if(betInfos.get(i).getBetNum()!=betNum) {
+					log.error("投注内容错误。");
+					return false;
+				}
+				int betAmount = 0; 
+				//单张钱校验
+				if(param.getIsAppend()==0) {
+					betAmount = betNum*2*param.getTimes();
+				}else {
+					betAmount = betNum*3*param.getTimes();
+				}
+				if(Integer.parseInt(betInfos.get(i).getAmount())!=betAmount) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
 			}else {
 				String[] nums = info.split("\\|");
 				if(nums.length<2) {
@@ -397,19 +414,41 @@ public class LottoService {
 				}
 				List<String> preList = Arrays.asList(nums[0].split(","));
 				List<String> postList = Arrays.asList(nums[1].split(","));
+				if(betInfos.get(i).getPlayType()!=1 && (preList.size()+postList.size())>7) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
+				if(betInfos.get(i).getPlayType()!=0 && (preList.size()+postList.size())==7) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
 				betNum = MathUtil.getCathecticsCount(preList.size(), postList.size());
-			}
-			if(betInfos.get(i).getBetNum()!=betNum) {
-				log.error("投注内容错误。"+info);
-				return false;
+				//单票注数校验
+				if(betInfos.get(i).getBetNum()!=betNum) {
+					log.error("投注内容错误。");
+					return false;
+				}
+				int betAmount = 0; 
+				//单张钱校验
+				if(param.getIsAppend()==0) {
+					betAmount = betNum*2*param.getTimes();
+				}else {
+					betAmount = betNum*3*param.getTimes();
+				}
+				if(Integer.parseInt(betInfos.get(i).getAmount())!=betAmount) {
+					log.error("投注内容错误。"+info);
+					return false;
+				}
 			}
 			betNumSum = betNumSum + betNum;
 		}
+		//定单总注数校验
 		if(param.getBetNum()!=betNumSum) {
 			log.error("投注内容错误。");
 			return false;
 		}
 		int amount = 0;//金额
+		//定单总金额校验
 		if(param.getIsAppend()==0) {
 			amount = betNumSum*2*param.getTimes();
 		}else {
