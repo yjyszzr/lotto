@@ -20,7 +20,7 @@ public interface ISuperLottoService {
 	 * 查询大乐透最近一期奖池
 	 * @return
 	 */
-	@RequestMapping(path="/activity/queryLottoLatestPrizes", method=RequestMethod.POST)
+	@RequestMapping(path="/lotto/queryLottoLatestPrizes", method=RequestMethod.POST)
 	public BaseResult<LottoDTO> queryLottoLatestPrizes(@RequestBody EmptyParam emptyParam);
 	
 
