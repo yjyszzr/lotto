@@ -13,18 +13,19 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dl.base.model.UserDeviceInfo;
 import com.dl.base.param.EmptyParam;
 import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
-import com.dl.base.util.DateUtilNew;
 import com.dl.base.util.JSONHelper;
 import com.dl.base.util.MD5Util;
 import com.dl.base.util.SessionUtil;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
+import com.dl.lotto.dto.LottoDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.enums.LottoResultEnum;
 import com.dl.lotto.param.ChartSetupParam;
@@ -155,5 +156,12 @@ public class LottoController {
 		String payToken = "lotto_" + MD5Util.crypt(keyStr);
 		stringRedisTemplate.opsForValue().set(payToken, dtoJson, ProjectConstant.BET_INFO_EXPIRE_TIME, TimeUnit.MINUTES);
 		return ResultGenerator.genSuccessResult("success", payToken);
+	}
+	
+	
+	@ApiOperation(value = "查询大乐透最近一期奖池", notes = "查询大乐透最近一期奖池")
+	@RequestMapping(path="/queryLottoLatestPrizes", method=RequestMethod.POST)
+	public BaseResult<LottoDTO> queryLottoLatestPrizes(@RequestBody EmptyParam emptyParam){
+		return lottoFirstService.queryLottoLatestPrizes();
 	}
 }

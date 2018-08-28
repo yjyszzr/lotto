@@ -1,6 +1,5 @@
 package com.dl.shop.lotto.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,8 +15,12 @@ import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.dl.base.result.BaseResult;
+import com.dl.base.result.ResultGenerator;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
+import com.dl.lotto.dto.LottoDTO;
 import com.dl.lotto.dto.LottoDropDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.dto.LottoHeatColdDTO;
@@ -462,4 +465,19 @@ public class LottoService {
 		
 		return true;
 	}
+	
+	/**
+	 * 查询最近一期大乐透的奖池
+	 * @return
+	 */
+	public BaseResult<LottoDTO> queryLottoLatestPrizes(){
+		LottoDTO lottoDTO = new LottoDTO();
+		List<Lotto> list = lottoMapper.getLastNumLottos(1);
+		Lotto lotto = list.get(0);
+		lottoDTO.setTerm_num(lotto.getPrizeNum());
+		lottoDTO.setPrizes(lotto.getPrizes());
+		lottoDTO.setPrize_date(lotto.getPrizeDate());
+		return ResultGenerator.genSuccessResult("success", lottoDTO);
+	}
+	
 }
