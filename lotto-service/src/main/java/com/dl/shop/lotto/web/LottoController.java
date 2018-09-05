@@ -113,10 +113,10 @@ public class LottoController {
 		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
 		dto.setLotteryClassifyId(2);
 		if(param.getIsAppend()==0) {
-			lotteryPlayClassifyId = 8;
+			lotteryPlayClassifyId = 9;
 			dto.setPlayType("0");
 		}else {
-			lotteryPlayClassifyId = 8;
+			lotteryPlayClassifyId = 10;
 			dto.setPlayType("5");
 		}
 		dto.setLotteryPlayClassifyId(lotteryPlayClassifyId);
