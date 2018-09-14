@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
+import com.dl.base.util.SessionUtil;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoDTO;
@@ -27,6 +28,8 @@ import com.dl.lotto.dto.LottoHeatColdDTO;
 import com.dl.lotto.dto.LottoNumDTO;
 import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.SaveBetInfoParam;
+import com.dl.member.api.ISwitchConfigService;
+import com.dl.member.param.UserDealActionParam;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
@@ -43,6 +46,9 @@ public class LottoService {
     private LottoMapper lottoMapper;
 	@Resource
 	private LottoDropMapper lottoDropMapper;
+	
+	@Resource
+	private ISwitchConfigService iSwitchConfigService;
 	
 	public String getLatelyTerm() {
 		List<Lotto> lottos = lottoMapper.getLastNumLottos(1);
@@ -478,6 +484,18 @@ public class LottoService {
 		lottoDTO.setPrizes(lotto.getPrizes());
 		lottoDTO.setPrize_date(lotto.getPrizeDate());
 		return ResultGenerator.genSuccessResult("success", lottoDTO);
+	}
+	//是否停止售卖
+	public boolean isShutDownBet() {
+		//判断用户是否有交易
+		UserDealActionParam param = new UserDealActionParam();
+		param.setUserId(SessionUtil.getUserId());
+		BaseResult<Integer> userDealAction = iSwitchConfigService.userDealAction(param);
+		Integer data = userDealAction.getData();
+		if(null != data && 0 == data) {
+			return true;
+		}
+		return false;
 	}
 	
 }
