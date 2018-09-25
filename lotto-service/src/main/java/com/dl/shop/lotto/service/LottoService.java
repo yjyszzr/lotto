@@ -493,7 +493,13 @@ public class LottoService {
 		BaseResult<Integer> userDealAction = iSwitchConfigService.userDealAction(param);
 		Integer data = userDealAction.getData();
 		if(null != data && 0 == data) {
-			return true;
+			List<Lotto> lottos = lottoMapper.getLastNumLottos(1);
+			if(lottos.size() >= 0) {
+				 Lotto lastLotto = lottos.get(0);
+				 if(TermDateUtil.isLast(lastLotto.getPrizeDate())) {
+					 return true;
+				 }
+			}
 		}
 		return false;
 	}
