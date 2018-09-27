@@ -487,6 +487,10 @@ public class LottoService {
 	}
 	//是否停止售卖
 	public boolean isShutDownBet() {
+		int shutDownBetValue = lottoMapper.shutDownBetValue();
+		if(shutDownBetValue == 1) {
+			return true;
+		}
 		//判断用户是否有交易
 		UserDealActionParam param = new UserDealActionParam();
 		param.setUserId(SessionUtil.getUserId());

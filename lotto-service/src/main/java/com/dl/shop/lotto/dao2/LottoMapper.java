@@ -13,6 +13,8 @@ public interface LottoMapper extends Mapper<Lotto> {
 	 * @return
 	 */
 	public List<Lotto> getLastNumLottos(@Param("count")Integer count);
+
+	public int shutDownBetValue();
 	
 	
 }
