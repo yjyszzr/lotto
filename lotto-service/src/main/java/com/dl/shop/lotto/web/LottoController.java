@@ -23,6 +23,7 @@ import com.dl.base.result.ResultGenerator;
 import com.dl.base.util.JSONHelper;
 import com.dl.base.util.MD5Util;
 import com.dl.base.util.SessionUtil;
+import com.dl.lottery.dto.OrderIdDTO;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoDTO;
@@ -39,7 +40,9 @@ import com.dl.shop.payment.dto.UserBetDetailInfoDTO;
 import com.dl.shop.payment.dto.UserBetPayInfoDTO;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/lotto")
 public class LottoController {
@@ -73,6 +76,15 @@ public class LottoController {
 		}
 		return ResultGenerator.genResult(LottoResultEnum.GET_CHART_DATA_NULL.getCode(), LottoResultEnum.GET_CHART_DATA_NULL.getMsg());
 	}
+	
+	@ApiOperation(value = "模拟投注确认", notes = "模拟投注确认")
+	@PostMapping("/createOrderBySimulate")
+	public BaseResult<OrderIdDTO> createOrderBySimulate(@RequestBody SaveBetInfoParam param){
+		//确认投注逻辑
+		BaseResult<OrderIdDTO> bROrder = lottoFirstService.createOrderBySimulate(param);
+		return bROrder;
+	}
+	
 	
 	@ApiOperation(value = "投注确认", notes = "投注确认")
 	@PostMapping("/saveBetInfo")

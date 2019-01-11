@@ -1,24 +1,32 @@
 package com.dl.shop.lotto.service;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.dl.base.model.UserDeviceInfo;
 import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
+import com.dl.base.util.JSONHelper;
+import com.dl.base.util.MD5Util;
 import com.dl.base.util.SessionUtil;
+import com.dl.lottery.dto.OrderIdDTO;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoDTO;
@@ -26,17 +34,24 @@ import com.dl.lotto.dto.LottoDropDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
 import com.dl.lotto.dto.LottoHeatColdDTO;
 import com.dl.lotto.dto.LottoNumDTO;
+import com.dl.lotto.enums.LottoResultEnum;
 import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.SaveBetInfoParam;
 import com.dl.member.api.ISwitchConfigService;
 import com.dl.member.param.UserDealActionParam;
+import com.dl.order.api.IOrderService;
+import com.dl.order.dto.OrderDTO;
+import com.dl.order.param.SubmitOrderParam;
+import com.dl.order.param.SubmitOrderParam.TicketDetail;
+import com.dl.shop.lotto.core.ProjectConstant;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
 import com.dl.shop.lotto.model.LottoDrop;
 import com.dl.shop.lotto.utils.MathUtil;
 import com.dl.shop.lotto.utils.TermDateUtil;
-
+import com.dl.shop.payment.dto.UserBetDetailInfoDTO;
+import com.dl.shop.payment.dto.UserBetPayInfoDTO;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,7 +62,9 @@ public class LottoService {
 	private LottoMapper lottoMapper;
 	@Resource
 	private LottoDropMapper lottoDropMapper;
-
+	@Resource
+	private IOrderService iOrderService;
+	
 	@Resource
 	private ISwitchConfigService iSwitchConfigService;
 
@@ -57,6 +74,155 @@ public class LottoService {
 		return term + "";
 	}
 
+	/**
+	 * 创建模拟订单
+	 * @return
+	 */
+	public BaseResult<OrderIdDTO> createOrderBySimulate(SaveBetInfoParam param){
+		//save bet info
+		String orderMoneyStr = param.getOrderMoney();
+		if(StringUtils.isBlank(orderMoneyStr)) {
+			return ResultGenerator.genResult(LottoResultEnum.PARAM_ERROR.getCode(), LottoResultEnum.PARAM_ERROR.getMsg());
+		}
+		Double orderMoney = Double.valueOf(orderMoneyStr);
+		List<LottoBetInfoDTO> betInfos = param.getBetInfos();
+		if(CollectionUtils.isEmpty(betInfos)) {
+			return ResultGenerator.genResult(LottoResultEnum.PARAM_ERROR.getCode(), LottoResultEnum.PARAM_ERROR.getMsg());
+		}
+		Integer ticketNum = betInfos.size();
+		boolean isOk = checkBetInfo(param);
+		if(!isOk) {
+			return ResultGenerator.genResult(LottoResultEnum.BET_INFO_ERROR.getCode(), LottoResultEnum.BET_INFO_ERROR.getMsg());
+		}
+		int betNum = param.getBetNum();
+		//投注时间
+		LocalDateTime stopTime = TermDateUtil.getChoseEndDateTime();
+		LocalDateTime nowTime = LocalDateTime.now();
+		if(nowTime.isAfter(stopTime)) {
+			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+		}
+		String issue = getLatelyTerm();
+		int lotteryPlayClassifyId ;
+		//缓存订单支付信息
+		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
+		dto.setLotteryClassifyId(2);
+		if(param.getIsAppend()==0) {
+			lotteryPlayClassifyId = 9;
+			dto.setPlayType("0");
+		}else {
+			lotteryPlayClassifyId = 10;
+			dto.setPlayType("5");
+		}
+		dto.setLotteryPlayClassifyId(lotteryPlayClassifyId);
+		dto.setBetNum(betNum);
+		dto.setOrderMoney(orderMoney);
+		dto.setTicketNum(ticketNum);
+		dto.setTimes(param.getTimes());
+		
+		dto.setForecastMoney("");
+		String requestFrom = "0";
+		UserDeviceInfo userDevice = SessionUtil.getUserDevice();
+		if(userDevice != null) {
+			requestFrom = userDevice.getPlat();
+		}
+		dto.setRequestFrom(requestFrom);
+		dto.setUserId(SessionUtil.getUserId());
+		dto.setIssue(issue);
+		List<UserBetDetailInfoDTO> betDetailInfos = new ArrayList<UserBetDetailInfoDTO>(betInfos.size());
+		for(LottoBetInfoDTO betInfo: betInfos) {
+			UserBetDetailInfoDTO dizqUserBetCellInfoDTO = new UserBetDetailInfoDTO();
+			dizqUserBetCellInfoDTO.setMatchId(0);
+			dizqUserBetCellInfoDTO.setChangci("");
+			dizqUserBetCellInfoDTO.setIsDan(0);
+			dizqUserBetCellInfoDTO.setLotteryClassifyId(2);
+			dizqUserBetCellInfoDTO.setLotteryPlayClassifyId(lotteryPlayClassifyId);
+			dizqUserBetCellInfoDTO.setMatchTeam("");
+			dizqUserBetCellInfoDTO.setPlayCode(issue);
+			dizqUserBetCellInfoDTO.setTicketData(betInfo.getBetInfo());
+			dizqUserBetCellInfoDTO.setBetType("0"+betInfo.getPlayType());
+			dizqUserBetCellInfoDTO.setFixedodds("");
+			dizqUserBetCellInfoDTO.setMatchTime((int)TermDateUtil.getTermEndDate());
+			betDetailInfos.add(dizqUserBetCellInfoDTO);
+		}
+		dto.setBetDetailInfos(betDetailInfos);
+		String dtoJson = JSONHelper.bean2json(dto);
+		String keyStr = "bet_info_" + SessionUtil.getUserId() +"_"+ System.currentTimeMillis();
+		String payToken = "lotto_" + MD5Util.crypt(keyStr);
+		
+		log.info("[createOrderBySimulate]" + " dtoJson:" + dtoJson + "\n keyStr:" + keyStr + " payToken:" + payToken);
+		log.info("=================== saveBetInfo succ====================");
+		
+		// order生成
+		final String betType = dto.getBetType();
+		List<TicketDetail> ticketDetails = betDetailInfos.stream().map(betCell -> {
+			TicketDetail ticketDetail = new TicketDetail();
+			ticketDetail.setMatch_id(betCell.getMatchId());
+			ticketDetail.setChangci(betCell.getChangci());
+			int matchTime = betCell.getMatchTime();
+			if (matchTime > 0) {
+				ticketDetail.setMatchTime(Date.from(Instant.ofEpochSecond(matchTime)));
+			}
+			ticketDetail.setMatchTeam(betCell.getMatchTeam());
+			ticketDetail.setLotteryClassifyId(betCell.getLotteryClassifyId());
+			ticketDetail.setLotteryPlayClassifyId(betCell.getLotteryPlayClassifyId());
+			ticketDetail.setTicketData(betCell.getTicketData());
+			ticketDetail.setIsDan(betCell.getIsDan());
+			ticketDetail.setIssue(betCell.getPlayCode());
+			ticketDetail.setFixedodds(betCell.getFixedodds());
+			ticketDetail.setBetType(betType);
+			return ticketDetail;
+		}).collect(Collectors.toList());
+		
+		BigDecimal moneyPaid = null;
+		BigDecimal ticketAmount = BigDecimal.valueOf(orderMoney);
+		BigDecimal surplus = null;
+		BigDecimal thirdPartyPaid = null;
+		
+		SubmitOrderParam submitOrderParam = new SubmitOrderParam();
+		submitOrderParam.setTicketNum(dto.getTicketNum());
+		submitOrderParam.setMoneyPaid(null);
+		submitOrderParam.setTicketAmount(ticketAmount);
+		submitOrderParam.setSurplus(surplus);
+		submitOrderParam.setThirdPartyPaid(thirdPartyPaid);
+		submitOrderParam.setPayName("");
+		submitOrderParam.setUserBonusId(0);
+		submitOrderParam.setBonusAmount(null);
+		submitOrderParam.setOrderFrom(dto.getRequestFrom());
+		int lotteryClassifyId = dto.getLotteryClassifyId();
+		String lotteryClassifyIdStr = lotteryClassifyId + "";
+		submitOrderParam.setLotteryClassifyId(lotteryClassifyId);
+		
+		lotteryPlayClassifyId = dto.getLotteryPlayClassifyId();
+		submitOrderParam.setLotteryPlayClassifyId(lotteryPlayClassifyId);
+		submitOrderParam.setPassType(dto.getBetType());
+		submitOrderParam.setPlayType("0" + dto.getPlayType());
+		submitOrderParam.setBetNum(dto.getBetNum());
+		submitOrderParam.setCathectic(dto.getTimes());
+		if (lotteryPlayClassifyId != 8 && lotteryClassifyId == 1) {
+			if (ticketDetails.size() > 1) {
+				Optional<TicketDetail> max = ticketDetails.stream().max((detail1, detail2) -> detail1.getMatchTime().compareTo(detail2.getMatchTime()));
+				submitOrderParam.setMatchTime(max.get().getMatchTime());
+			} else {
+				submitOrderParam.setMatchTime(ticketDetails.get(0).getMatchTime());
+			}
+		}
+		submitOrderParam.setForecastMoney(dto.getForecastMoney());
+
+		submitOrderParam.setIssue(dto.getIssue());
+		submitOrderParam.setTicketDetails(ticketDetails);
+		BaseResult<OrderDTO> createOrder = iOrderService.createOrder(submitOrderParam);
+		if (createOrder.getCode() != 0) {
+			log.info("订单创建失败！");
+			return ResultGenerator.genFailResult("创建模拟订单失败");
+		}
+		String orderId = createOrder.getData().getOrderId().toString();
+		String orderSn = createOrder.getData().getOrderSn();
+		OrderIdDTO orderDTO = new OrderIdDTO();
+		orderDTO.setOrderId(orderId);
+		orderDTO.setOrderSn(orderSn);
+		return ResultGenerator.genSuccessResult("success", orderDTO);
+	}
+	
 	/**
 	 * 投注页数据
 	 */
