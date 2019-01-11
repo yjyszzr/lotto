@@ -77,9 +77,9 @@ public class LottoController {
 	@ApiOperation(value = "投注确认", notes = "投注确认")
 	@PostMapping("/saveBetInfo")
 	public BaseResult<String> saveBetInfo(@RequestBody SaveBetInfoParam param) {
-		if(lottoFirstService.isShutDownBet()) {
-			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
-		}
+//		if(lottoFirstService.isShutDownBet()) {
+//			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+//		}
 		String orderMoneyStr = param.getOrderMoney();
 		if(StringUtils.isBlank(orderMoneyStr)) {
 			return ResultGenerator.genResult(LottoResultEnum.PARAM_ERROR.getCode(), LottoResultEnum.PARAM_ERROR.getMsg());
