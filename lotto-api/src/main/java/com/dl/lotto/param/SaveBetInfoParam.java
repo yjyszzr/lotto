@@ -31,4 +31,6 @@ public class SaveBetInfoParam {
 //	private int matchTime;
 	@ApiModelProperty(value="投注彩票")
 	private List<LottoBetInfoDTO> betInfos;
+	@ApiModelProperty(value="店铺ID")
+	private Integer storeId;
 }

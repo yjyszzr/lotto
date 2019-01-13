@@ -180,6 +180,7 @@ public class LottoService {
 		BigDecimal thirdPartyPaid = BigDecimal.ZERO;
 		
 		SubmitOrderParam submitOrderParam = new SubmitOrderParam();
+		submitOrderParam.setStoreId(param.getStoreId());
 		submitOrderParam.setTicketNum(dto.getTicketNum());
 		submitOrderParam.setMoneyPaid(moneyPaid);
 		submitOrderParam.setTicketAmount(ticketAmount);
