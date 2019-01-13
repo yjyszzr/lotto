@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.dl.base.param.EmptyParam;
 import com.dl.base.result.BaseResult;
 import com.dl.lotto.dto.LottoDTO;
+import com.dl.lotto.dto.LottoFirstDTO;
 
 /**
  * 大乐透接口
@@ -23,5 +24,11 @@ public interface ISuperLottoService {
 	@RequestMapping(path="/lotto/queryLottoLatestPrizes", method=RequestMethod.POST)
 	public BaseResult<LottoDTO> queryLottoLatestPrizes(@RequestBody EmptyParam emptyParam);
 	
-
+	/**
+	 * 店铺查询TicketInfo
+	 * @param emptyParam
+	 * @return
+	 */
+	@RequestMapping(path="/lotto/getTicketInfoByStore", method=RequestMethod.POST)
+	public BaseResult<LottoFirstDTO> getTicketInfo(@RequestBody EmptyParam emptyParam);
 }
