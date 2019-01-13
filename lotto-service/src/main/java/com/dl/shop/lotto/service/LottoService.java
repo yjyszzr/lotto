@@ -186,7 +186,7 @@ public class LottoService {
 		submitOrderParam.setThirdPartyPaid(thirdPartyPaid);
 		submitOrderParam.setPayName("");
 		submitOrderParam.setUserBonusId(0);
-		submitOrderParam.setBonusAmount(null);
+		submitOrderParam.setBonusAmount(BigDecimal.ZERO);
 		submitOrderParam.setOrderFrom(dto.getRequestFrom());
 		int lotteryClassifyId = dto.getLotteryClassifyId();
 		String lotteryClassifyIdStr = lotteryClassifyId + "";
