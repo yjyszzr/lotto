@@ -212,7 +212,7 @@ public class LottoService {
 		submitOrderParam.setTicketDetails(ticketDetails);
 		BaseResult<OrderDTO> createOrder = iOrderService.createOrder(submitOrderParam);
 		if (createOrder.getCode() != 0) {
-			log.info("订单创建失败！");
+			log.info("订单创建失败！msg:" + createOrder.getMsg());
 			return ResultGenerator.genFailResult("创建模拟订单失败");
 		}
 		String orderId = createOrder.getData().getOrderId().toString();
