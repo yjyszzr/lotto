@@ -67,6 +67,17 @@ public class LottoController {
 		return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
 	}
 	
+	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")
+	@PostMapping("/getTicketInfoByStore")
+	public BaseResult<LottoFirstDTO> getTicketInfoByStore(@RequestBody EmptyParam emprt) {
+		LottoFirstDTO queryFirstData = lottoFirstService.queryFirstData();
+		if(queryFirstData != null) {
+			return ResultGenerator.genSuccessResult("", queryFirstData);
+		}
+		return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+	}
+	
+	
 	@ApiOperation(value = "走势图数据", notes = "走势图数据")
 	@PostMapping("/getChartData")
 	public BaseResult<LottoChartDataDTO> getChartData(@RequestBody ChartSetupParam param) {
@@ -80,6 +91,14 @@ public class LottoController {
 	@ApiOperation(value = "模拟投注确认", notes = "模拟投注确认")
 	@PostMapping("/createOrderBySimulate")
 	public BaseResult<OrderIdDTO> createOrderBySimulate(@RequestBody SaveBetInfoParam param){
+		//确认投注逻辑
+		BaseResult<OrderIdDTO> bROrder = lottoFirstService.createOrderBySimulate(param);
+		return bROrder;
+	}
+	
+	@ApiOperation(value = "模拟投注确认", notes = "模拟投注确认")
+	@PostMapping("/createOrderSimulateByStore")
+	public BaseResult<OrderIdDTO> createOrderSimulateByStore(@RequestBody SaveBetInfoParam param){
 		//确认投注逻辑
 		BaseResult<OrderIdDTO> bROrder = lottoFirstService.createOrderBySimulate(param);
 		return bROrder;
