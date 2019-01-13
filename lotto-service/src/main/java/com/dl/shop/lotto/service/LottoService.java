@@ -173,14 +173,14 @@ public class LottoService {
 			return ticketDetail;
 		}).collect(Collectors.toList());
 		
-		BigDecimal moneyPaid = null;
+		BigDecimal moneyPaid = BigDecimal.ZERO;
 		BigDecimal ticketAmount = BigDecimal.valueOf(orderMoney);
-		BigDecimal surplus = null;
-		BigDecimal thirdPartyPaid = null;
+		BigDecimal surplus = BigDecimal.ZERO;
+		BigDecimal thirdPartyPaid = BigDecimal.ZERO;
 		
 		SubmitOrderParam submitOrderParam = new SubmitOrderParam();
 		submitOrderParam.setTicketNum(dto.getTicketNum());
-		submitOrderParam.setMoneyPaid(null);
+		submitOrderParam.setMoneyPaid(moneyPaid);
 		submitOrderParam.setTicketAmount(ticketAmount);
 		submitOrderParam.setSurplus(surplus);
 		submitOrderParam.setThirdPartyPaid(thirdPartyPaid);
