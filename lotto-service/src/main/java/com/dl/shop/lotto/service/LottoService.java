@@ -105,7 +105,7 @@ public class LottoService {
 		int lotteryPlayClassifyId ;
 		//缓存订单支付信息
 		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
-		dto.setBetType("0");	//bet type 投注类型
+		dto.setBetType("00");	//bet type 投注类型
 		dto.setLotteryClassifyId(2);
 		if(param.getIsAppend()==0) {
 			lotteryPlayClassifyId = 9;
