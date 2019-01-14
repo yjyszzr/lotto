@@ -105,7 +105,7 @@ public class LottoService {
 		int lotteryPlayClassifyId ;
 		//缓存订单支付信息
 		UserBetPayInfoDTO dto = new UserBetPayInfoDTO();
-		dto.setBetType("00");	//bet type 投注类型
+		dto.setBetType("99");	//bet type 投注类型
 		dto.setLotteryClassifyId(2);
 		if(param.getIsAppend()==0) {
 			lotteryPlayClassifyId = 9;
@@ -131,6 +131,7 @@ public class LottoService {
 		dto.setIssue(issue);
 		List<UserBetDetailInfoDTO> betDetailInfos = new ArrayList<UserBetDetailInfoDTO>(betInfos.size());
 		for(LottoBetInfoDTO betInfo: betInfos) {
+			log.info("[createOrderBySimulate]" + " betInfo.playType:" + betInfo.getPlayType() + " amt:" + betInfo.getAmount());
 			UserBetDetailInfoDTO dizqUserBetCellInfoDTO = new UserBetDetailInfoDTO();
 			dizqUserBetCellInfoDTO.setMatchId(0);
 			dizqUserBetCellInfoDTO.setChangci("");
@@ -170,7 +171,7 @@ public class LottoService {
 			ticketDetail.setIsDan(betCell.getIsDan());
 			ticketDetail.setIssue(betCell.getPlayCode());
 			ticketDetail.setFixedodds(betCell.getFixedodds());
-			ticketDetail.setBetType(betType);
+			ticketDetail.setBetType(betCell.getBetType());
 			return ticketDetail;
 		}).collect(Collectors.toList());
 		
