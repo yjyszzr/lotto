@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.dl.base.param.EmptyParam;
 import com.dl.base.result.BaseResult;
 import com.dl.lottery.dto.OrderIdDTO;
+import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoDTO;
 import com.dl.lotto.dto.LottoFirstDTO;
+import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.SaveBetInfoParam;
 
 /**
@@ -18,6 +20,14 @@ import com.dl.lotto.param.SaveBetInfoParam;
  */
 @FeignClient(value="lotto-service")
 public interface ISuperLottoService {
+	
+	/**
+	 * 获取走势图
+	 * @param param
+	 * @return
+	 */
+	@RequestMapping(path="/lotto/getChartDataByStore", method=RequestMethod.POST)
+	public BaseResult<LottoChartDataDTO> getChartDataByStore(@RequestBody ChartSetupParam param);
 	
 	/**
 	 * 查询大乐透最近一期奖池

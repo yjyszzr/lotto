@@ -77,10 +77,19 @@ public class LottoController {
 		return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(), LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
 	}
 	
-	
 	@ApiOperation(value = "走势图数据", notes = "走势图数据")
 	@PostMapping("/getChartData")
 	public BaseResult<LottoChartDataDTO> getChartData(@RequestBody ChartSetupParam param) {
+		LottoChartDataDTO lottoChartData = lottoFirstService.getChartData(param);
+		if(lottoChartData != null) {
+			return ResultGenerator.genSuccessResult("", lottoChartData);
+		}
+		return ResultGenerator.genResult(LottoResultEnum.GET_CHART_DATA_NULL.getCode(), LottoResultEnum.GET_CHART_DATA_NULL.getMsg());
+	}
+	
+	@ApiOperation(value = "走势图数据", notes = "走势图数据")
+	@PostMapping("/getChartDataByStore")
+	public BaseResult<LottoChartDataDTO> getChartDataByStore(@RequestBody ChartSetupParam param) {
 		LottoChartDataDTO lottoChartData = lottoFirstService.getChartData(param);
 		if(lottoChartData != null) {
 			return ResultGenerator.genSuccessResult("", lottoChartData);
