@@ -23,7 +23,10 @@ import com.dl.base.result.ResultGenerator;
 import com.dl.base.util.JSONHelper;
 import com.dl.base.util.MD5Util;
 import com.dl.base.util.SessionUtil;
+import com.dl.lottery.api.ILotteryDiscoveryService;
 import com.dl.lottery.dto.OrderIdDTO;
+import com.dl.lottery.dto.SZCPrizeDTO;
+import com.dl.lottery.param.DiscoveryPageParam;
 import com.dl.lotto.dto.LottoBetInfoDTO;
 import com.dl.lotto.dto.LottoChartDataDTO;
 import com.dl.lotto.dto.LottoDTO;
@@ -55,7 +58,16 @@ public class LottoController {
 	private IUserBonusService userBonusService;
 	@Resource
 	private IUserService userService;
+	@Resource
+	private ILotteryDiscoveryService iLotteryDisService;
 
+	@ApiOperation(value = "获取乐透开奖结果", notes = "获取乐透开奖结果")
+	@PostMapping("/szcDetailList")
+    public BaseResult<SZCPrizeDTO> szcDetailList(@RequestBody DiscoveryPageParam param){
+		log.info("[szcDetailList]");
+		return iLotteryDisService.szcDetailList(param);
+	}
+	
 	
 	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")
 	@PostMapping("/getTicketInfo")
