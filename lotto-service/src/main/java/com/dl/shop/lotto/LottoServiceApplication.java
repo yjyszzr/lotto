@@ -18,7 +18,7 @@ import com.dl.shop.lotto.core.ProjectConstant;
 @MapperScan(basePackages= {ProjectConstant.MAPPER_PACKAGE,"com.dl.shop.lotto.dao"})
 @EnableTransactionManagement
 @EnableEurekaClient
-@EnableFeignClients({"com.dl.member.api", "com.dl.order.api", "com.dl.shop.payment.api"})
+@EnableFeignClients({"com.dl.member.api", "com.dl.order.api", "com.dl.shop.payment.api","com.dl.lottery.api"})
 public class LottoServiceApplication {
 
 	public static void main(String[] args) {
