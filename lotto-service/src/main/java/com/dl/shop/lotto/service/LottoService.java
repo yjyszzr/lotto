@@ -174,7 +174,7 @@ public class LottoService {
 			return ticketDetail;
 		}).collect(Collectors.toList());
 		
-		BigDecimal moneyPaid = BigDecimal.ZERO;
+		BigDecimal moneyPaid = BigDecimal.valueOf(orderMoney);
 		BigDecimal ticketAmount = BigDecimal.valueOf(orderMoney);
 		BigDecimal surplus = BigDecimal.ZERO;
 		BigDecimal thirdPartyPaid = BigDecimal.ZERO;
