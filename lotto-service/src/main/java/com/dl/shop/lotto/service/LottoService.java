@@ -743,19 +743,26 @@ public class LottoService {
 	}
 
 	// 是否停止售卖
+	@Transactional(value = "transactionManager1")
 	public boolean isShutDownBet() {
-		int shutDownBetValue = lottoMapper.shutDownBetValue();
-		if(shutDownBetValue == 1) {
-			return true;
+		SysConfigParam sysCfgParam = new SysConfigParam();
+		sysCfgParam.setBusinessId(1);
+		BaseResult<SysConfigDTO> baseR = iSysCfgService.querySysConfig(sysCfgParam);
+		if(baseR != null && baseR.isSuccess()) {
+			SysConfigDTO sysCfgDTO = baseR.getData();
+			int shutDownBetValue = sysCfgDTO.getValue().intValue();
+			if(shutDownBetValue == 1) {
+				return true;
+			}
 		}
 		//判断用户是否有交易
-		UserDealActionParam param = new UserDealActionParam();
-		param.setUserId(SessionUtil.getUserId());
-		BaseResult<Integer> userDealAction = iSwitchConfigService.userDealAction(param);
-		Integer data = userDealAction.getData();
-		if (null != data && 0 == data) {
-			return true;
-		}
+//		UserDealActionParam param = new UserDealActionParam();
+//		param.setUserId(SessionUtil.getUserId());
+//		BaseResult<Integer> userDealAction = iSwitchConfigService.userDealAction(param);
+//		Integer data = userDealAction.getData();
+//		if (null != data && 0 == data) {
+//			return true;
+//		}
 		List<Lotto> lottos = lottoMapper.getLastNumLottos(1);
 		if (lottos.size() >= 0) {
 			Lotto lastLotto = lottos.get(0);

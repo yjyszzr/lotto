@@ -72,6 +72,10 @@ public class LottoController {
 	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")
 	@PostMapping("/getTicketInfo")
 	public BaseResult<LottoFirstDTO> getTicketInfo(@RequestBody EmptyParam emprt) {
+		boolean isShutDown = lottoFirstService.isShutDownBet();
+		if(isShutDown) {
+			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(),LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+		}
 		LottoFirstDTO queryFirstData = lottoFirstService.queryFirstData();
 		if(queryFirstData != null) {
 			return ResultGenerator.genSuccessResult("", queryFirstData);
@@ -82,6 +86,10 @@ public class LottoController {
 	@ApiOperation(value = "选号投注页数据", notes = "选号投注页数据")
 	@PostMapping("/getTicketInfoByStore")
 	public BaseResult<LottoFirstDTO> getTicketInfoByStore(@RequestBody EmptyParam emprt) {
+		boolean isShutDown = lottoFirstService.isShutDownBet();
+		if(isShutDown) {
+			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(),LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+		}
 		LottoFirstDTO queryFirstData = lottoFirstService.queryFirstData();
 		if(queryFirstData != null) {
 			return ResultGenerator.genSuccessResult("", queryFirstData);
