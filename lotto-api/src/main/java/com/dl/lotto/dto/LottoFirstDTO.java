@@ -21,4 +21,6 @@ public class LottoFirstDTO {
 	private List<String> preList;
 	@ApiModelProperty(value="后区遗漏")
 	private List<String> postList;
+	@ApiModelProperty(value="是否展示胆拖")
+	private int isShowDragOn;
 }

@@ -38,6 +38,9 @@ import com.dl.lotto.enums.LottoResultEnum;
 import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.SaveBetInfoParam;
 import com.dl.member.api.ISwitchConfigService;
+import com.dl.member.api.ISysConfigService;
+import com.dl.member.dto.SysConfigDTO;
+import com.dl.member.param.SysConfigParam;
 import com.dl.member.param.UserDealActionParam;
 import com.dl.order.api.IOrderService;
 import com.dl.order.dto.OrderDTO;
@@ -67,7 +70,9 @@ public class LottoService {
 	
 	@Resource
 	private ISwitchConfigService iSwitchConfigService;
-
+	@Resource
+	private ISysConfigService iSysCfgService;
+	
 	public String getLatelyTerm() {
 		List<Lotto> lottos = lottoMapper.getLastNumLottos(1);
 		int term = lottos.get(0).getTermNum() + 1;
@@ -253,6 +258,15 @@ public class LottoService {
 					lottoFirstDTO.setPostList(Arrays.asList(lottoDrop.getPostDrop().split(",")));
 				}
 			}
+		}
+		//是否展示胆拖
+		SysConfigParam sysCfgParam = new SysConfigParam();
+		sysCfgParam.setBusinessId(54);
+		BaseResult<SysConfigDTO> baseResult = iSysCfgService.querySysConfig(sysCfgParam);
+		if(baseResult != null && baseResult.isSuccess()) {
+			SysConfigDTO sysCfgDTO = baseResult.getData();
+			int isShow = sysCfgDTO.getValue().intValue();
+			lottoFirstDTO.setIsShowDragOn(isShow);
 		}
 		return lottoFirstDTO;
 	}
