@@ -10,6 +10,7 @@ public enum LottoResultEnum {
 	BET_NUMBER_LIMIT(304005,"彩票总注数不得超过10000注"),
 	BET_TIMES_LIMIT(304006,"彩票总倍数不得超过99999倍"),
 	BET_MONEY_LIMIT(304007,"单注彩票金额不得超过2万元"),
+	BET_DANTUO_FORBIT(304008,"该版本暂不支持胆拖拖住"),
 	BET_MONEY_other(304100,"");
 	
 	

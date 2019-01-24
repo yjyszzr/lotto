@@ -99,6 +99,21 @@ public class LottoService {
 		if(!isOk) {
 			return ResultGenerator.genResult(LottoResultEnum.BET_INFO_ERROR.getCode(), LottoResultEnum.BET_INFO_ERROR.getMsg());
 		}
+		//是否包含胆拖
+		boolean isContainDantuo = false;
+		if(betInfos != null) {
+			for(LottoBetInfoDTO lottoBetInfo : betInfos) {
+				String betsInfo = lottoBetInfo.getBetInfo();
+				if(betsInfo != null && betsInfo.contains("$")) {
+					isContainDantuo = true;
+					break;
+				}
+			}
+		}
+		log.info("[createOrderBySimulate]" + " isContainDantuo:" + isContainDantuo);
+		if(isContainDantuo) {
+			return ResultGenerator.genResult(LottoResultEnum.BET_DANTUO_FORBIT.getCode(), LottoResultEnum.BET_DANTUO_FORBIT.getMsg());
+		}
 		int betNum = param.getBetNum();
 		//投注时间
 		LocalDateTime stopTime = TermDateUtil.getChoseEndDateTime();
