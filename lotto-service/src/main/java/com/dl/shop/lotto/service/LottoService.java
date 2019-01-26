@@ -1,10 +1,12 @@
 package com.dl.shop.lotto.service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -12,7 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Resource;
@@ -41,12 +42,10 @@ import com.dl.member.api.ISwitchConfigService;
 import com.dl.member.api.ISysConfigService;
 import com.dl.member.dto.SysConfigDTO;
 import com.dl.member.param.SysConfigParam;
-import com.dl.member.param.UserDealActionParam;
 import com.dl.order.api.IOrderService;
 import com.dl.order.dto.OrderDTO;
 import com.dl.order.param.SubmitOrderParam;
 import com.dl.order.param.SubmitOrderParam.TicketDetail;
-import com.dl.shop.lotto.core.ProjectConstant;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
 import com.dl.shop.lotto.model.Lotto;
@@ -790,4 +789,29 @@ public class LottoService {
 		return false;
 	}
 
+	//1,3,6
+	public boolean isShutDownV2() {
+		boolean isShutDown = false;
+		Calendar cal = Calendar.getInstance();
+		int w = cal.get(Calendar.DAY_OF_WEEK)-1;
+		log.info("w:"+w);
+		if(w == 1 || w == 3 || w == 6) {
+			SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+			String strTime = df.format(new Date());
+			log.info(strTime);
+			if(strTime.compareTo("19:00") > 0 && strTime.compareTo("24:00") < 0) {
+				isShutDown = true;
+			}
+		}
+		return isShutDown;
+	}
+
+//	public LottoService() {
+//		boolean isShutDown = isShutDownV2();
+//		System.out.println("isShutDown:" + isShutDown);
+//	}
+//	
+//	public static void main(String[] args) {
+//		new LottoService();
+//	}
 }

@@ -74,7 +74,11 @@ public class LottoController {
 	public BaseResult<LottoFirstDTO> getTicketInfo(@RequestBody EmptyParam emprt) {
 		boolean isShutDown = lottoFirstService.isShutDownBet();
 		if(isShutDown) {
-			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(),LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+			return ResultGenerator.genResult(LottoResultEnum.WAITE_FOR_PRIZE.getCode(),LottoResultEnum.WAITE_FOR_PRIZE.getMsg());
+		}
+		boolean isShutDownV2 = lottoFirstService.isShutDownV2();
+		if(isShutDownV2) {
+			return ResultGenerator.genResult(LottoResultEnum.WAITE_FOR_PRIZE.getCode(),LottoResultEnum.WAITE_FOR_PRIZE.getMsg());
 		}
 		LottoFirstDTO queryFirstData = lottoFirstService.queryFirstData();
 		if(queryFirstData != null) {
@@ -88,7 +92,11 @@ public class LottoController {
 	public BaseResult<LottoFirstDTO> getTicketInfoByStore(@RequestBody EmptyParam emprt) {
 		boolean isShutDown = lottoFirstService.isShutDownBet();
 		if(isShutDown) {
-			return ResultGenerator.genResult(LottoResultEnum.GET_TICKET_INFO_NULL.getCode(),LottoResultEnum.GET_TICKET_INFO_NULL.getMsg());
+			return ResultGenerator.genResult(LottoResultEnum.WAITE_FOR_PRIZE.getCode(),LottoResultEnum.WAITE_FOR_PRIZE.getMsg());
+		}
+		boolean isShutDownV2 = lottoFirstService.isShutDownV2();
+		if(isShutDownV2) {
+			return ResultGenerator.genResult(LottoResultEnum.WAITE_FOR_PRIZE.getCode(),LottoResultEnum.WAITE_FOR_PRIZE.getMsg());
 		}
 		LottoFirstDTO queryFirstData = lottoFirstService.queryFirstData();
 		if(queryFirstData != null) {
@@ -121,6 +129,10 @@ public class LottoController {
 	@PostMapping("/createOrderBySimulate")
 	public BaseResult<OrderIdDTO> createOrderBySimulate(@RequestBody SaveBetInfoParam param){
 		//确认投注逻辑
+		boolean isShutDownV2 = lottoFirstService.isShutDownV2();
+		if(isShutDownV2) {
+			return ResultGenerator.genResult(LottoResultEnum.WAITE_FOR_PRIZE.getCode(),LottoResultEnum.WAITE_FOR_PRIZE.getMsg());
+		}
 		BaseResult<OrderIdDTO> bROrder = lottoFirstService.createOrderBySimulate(param);
 		return bROrder;
 	}
@@ -129,6 +141,10 @@ public class LottoController {
 	@PostMapping("/createOrderSimulateByStore")
 	public BaseResult<OrderIdDTO> createOrderSimulateByStore(@RequestBody SaveBetInfoParam param){
 		//确认投注逻辑
+		boolean isShutDownV2 = lottoFirstService.isShutDownV2();
+		if(isShutDownV2) {
+			return ResultGenerator.genResult(LottoResultEnum.WAITE_FOR_PRIZE.getCode(),LottoResultEnum.WAITE_FOR_PRIZE.getMsg());
+		}
 		BaseResult<OrderIdDTO> bROrder = lottoFirstService.createOrderBySimulate(param);
 		return bROrder;
 	}
