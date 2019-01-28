@@ -760,7 +760,7 @@ public class LottoService {
 	@Transactional(value = "transactionManager1")
 	public boolean isShutDownBet() {
 		SysConfigParam sysCfgParam = new SysConfigParam();
-		sysCfgParam.setBusinessId(1);
+		sysCfgParam.setBusinessId(56);
 		BaseResult<SysConfigDTO> baseR = iSysCfgService.querySysConfig(sysCfgParam);
 		if(baseR != null && baseR.isSuccess()) {
 			SysConfigDTO sysCfgDTO = baseR.getData();
