@@ -277,7 +277,7 @@ public class LottoService {
 		SysConfigParam sysCfgParam = new SysConfigParam();
 		sysCfgParam.setBusinessId(54);
 		BaseResult<SysConfigDTO> baseResult = iSysCfgService.querySysConfig(sysCfgParam);
-		if(baseResult != null && baseResult.isSuccess()) {
+		if(lottoFirstDTO != null && baseResult != null && baseResult.isSuccess()) {
 			SysConfigDTO sysCfgDTO = baseResult.getData();
 			int isShow = sysCfgDTO.getValue().intValue();
 			lottoFirstDTO.setIsShowDragOn(isShow);
@@ -808,6 +808,8 @@ public class LottoService {
 
 //	public LottoService() {
 //		boolean isShutDown = isShutDownV2();
+//		System.out.println("isShutDown:" + isShutDown);
+//		isShutDown = isShutDownBet();
 //		System.out.println("isShutDown:" + isShutDown);
 //	}
 //	
