@@ -1,34 +1,15 @@
 package com.dl.shop.lotto.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.annotation.Resource;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.dl.base.result.BaseResult;
 import com.dl.base.result.ResultGenerator;
 import com.dl.base.util.SessionUtil;
-import com.dl.lotto.dto.LottoBetInfoDTO;
-import com.dl.lotto.dto.LottoChartDataDTO;
-import com.dl.lotto.dto.LottoDTO;
-import com.dl.lotto.dto.LottoDropDTO;
-import com.dl.lotto.dto.LottoFirstDTO;
-import com.dl.lotto.dto.LottoHeatColdDTO;
-import com.dl.lotto.dto.LottoNumDTO;
+import com.dl.lotto.dto.*;
 import com.dl.lotto.param.ChartSetupParam;
 import com.dl.lotto.param.SaveBetInfoParam;
 import com.dl.member.api.ISwitchConfigService;
+import com.dl.member.api.ISysConfigService;
+import com.dl.member.dto.SysConfigDTO;
+import com.dl.member.param.SysConfigParam;
 import com.dl.member.param.UserDealActionParam;
 import com.dl.shop.lotto.dao2.LottoDropMapper;
 import com.dl.shop.lotto.dao2.LottoMapper;
@@ -36,8 +17,14 @@ import com.dl.shop.lotto.model.Lotto;
 import com.dl.shop.lotto.model.LottoDrop;
 import com.dl.shop.lotto.utils.MathUtil;
 import com.dl.shop.lotto.utils.TermDateUtil;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import javax.annotation.Resource;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -50,6 +37,9 @@ public class LottoService {
 
 	@Resource
 	private ISwitchConfigService iSwitchConfigService;
+
+	@Resource
+	private ISysConfigService iSysConfigService;
 
 	public String getLatelyTerm() {
 		List<Lotto> lottos = lottoMapper.getLastNumLottos(1);
@@ -562,10 +552,15 @@ public class LottoService {
 
 	// 是否停止售卖
 	public boolean isShutDownBet() {
-		int shutDownBetValue = lottoMapper.shutDownBetValue();
-		if(shutDownBetValue == 1) {
-			return true;
+		SysConfigParam sysConfigParam = new SysConfigParam();
+		sysConfigParam.setBusinessId(1);
+		BaseResult<SysConfigDTO> sysConfigDTOBaseResult = iSysConfigService.querySysConfig(sysConfigParam);
+		if(sysConfigDTOBaseResult.isSuccess()){
+			if(sysConfigDTOBaseResult.getData().getValue().intValue() == 1){
+				return true;
+			}
 		}
+
 		//判断用户是否有交易
 		UserDealActionParam param = new UserDealActionParam();
 		param.setUserId(SessionUtil.getUserId());
